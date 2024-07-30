@@ -69,8 +69,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Factory Dashboard</title>
+    <link rel="stylesheet" href="st.css">
 </head>
 <body>
+    <div class="dashboard-container">
     <h2>Upload Product</h2>
     <form action="dash.php" method="post" enctype="multipart/form-data">
         <label for="name">Product Name:</label>
