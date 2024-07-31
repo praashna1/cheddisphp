@@ -1,5 +1,7 @@
 <?php
 require 'includes/database.php';
+
+session_start();
 $conn = getDB();
 
 ini_set('display_errors', 1);

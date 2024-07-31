@@ -8,7 +8,7 @@ $conn = getDB();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
     $password = $_POST['password'];
-    $user = getUser($conn, $name);
+    $user = getFactory($conn, $name);
     if (empty($user) || empty($password)) {
         echo 'Username or Password is empty';
     } else {
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo 'no user found';
         }else {
 
-            if ($user == $user['user'] && $password == $user['password']) {
+            if ($name == $user['name'] && $password == $user['password']) {
                 // Successfully authenticated
                 echo "Login successful";
                 echo $user['user'];
@@ -32,8 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_start();
                 $_SESSION['factory_id'] = $user['factory_id'];
                 $_SESSION['name'] = $user['name'];
-                header("Location: index.php");
+                header("Location: dashboard.php");
                 exit();
+               
             } else {
                 echo "Invalid username or password";
             }

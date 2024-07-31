@@ -1,43 +1,120 @@
 <?php require 'header.php'?>
-<!-- <!DOCTYPE html>
+           
+            <?php
+ $db_host="localhost";
+ $db_user="root";
+ $db_pass="root";
+ $db_name="cheddis";
+
+ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+
+
+$sql = "SELECT product.product_id, product.name, product.description, product.price, product.image, product.quantity, factory.name AS factory_name
+        FROM product
+        JOIN factory ON product.factory_id = factory.factory_id";
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar with Sidebar</title>
-    <link rel="stylesheet" href="home.css">
-     Font Awesome for icons -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Candy Shop</title>
+    
+    <script>
+
+let currentImageIndex = 0;
+        const images = [
+            "img/5545623.jpg",
+            "img/38283799.jpg",
+            "img/5545623.jpg"
+        ];
+
+        function changeImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            document.getElementById('banner-image').src = images[currentImageIndex];
+            console.log('Image changed to: ', images[currentImageIndex]); 
+        }
+
+        setInterval(changeImage, 5000);
+
+        function updateTime() {
+            var now = new Date();
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            var dateStr = now.toLocaleDateString('en-US', options);
+            var timeStr = now.toLocaleTimeString('en-US');
+
+            document.getElementById('live-banner').innerHTML = 'Welcome! Today is ' + dateStr + ', ' + timeStr;
+        }
+
+        setInterval(updateTime, 1000);
+    </script>
 </head>
-<body> --> 
-    <!-- <div class="container">
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="logo.png" alt="Logo">
-            </div>
-            <ul>
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
+<body>
+    <h1>Welcome to the Cheddis</h1>
+    <!-- <div class="products"> -->
+       
+        <!-- // if ($result->num_rows > 0) {
+        //     while ($row = $result->fetch_assoc()) {
+        //         echo "<div class='product'>";
+        //         echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "'>";
+        //         echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
+        //         echo "<p>" . htmlspecialchars($row['description']) . "</p>";
+        //         echo "<p>Price: $" . htmlspecialchars($row['price']) . "</p>";
+        //         echo "<p>" . htmlspecialchars($row['quantity']) . "</p>";
+        //         echo "<p>Factory: " . htmlspecialchars($row['factory_name']) . "</p>";
+        //         echo "</div>";
+        //     }
+        // } else {
+        //     echo "No products available.";
+        // }
+        // $conn->close(); -->
+        
+        <div id="live-banner" class="live-banner">Welcome! Today is ...</div>
+        <div id="picture-banner" class="picture-banner">
+        <img id="banner-iamge" src="img\5545623.jpg" alt="Special Promotion">
+       
+    </div>
+    </div>
+        <div class="container">
+        <h1>Our Candies</h1>
+        <div class="product-grid">
+            <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <div class="product-card">
+                        <img src="img/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                        <div class="product-info">
+                            <h2><?php echo htmlspecialchars($row['name']); ?></h2>
+                            <p><?php echo htmlspecialchars($row['description']); ?></p>
+                            <p>Price: $<?php echo number_format($row['price'], 2); ?></p>
+                            <p>Available Quantity: <?php echo htmlspecialchars($row['quantity']); ?></p>
+                            <form action="cart.php" method="post">
+                                <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+                                <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($row['quantity']); ?>" value="1">
+                                <button type="submit">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>No products available.</p>
+            <?php endif; ?>
         </div>
-        <div class="main-content">
-            <nav class="navbar">
-                <div class="navbar-logo">
-                    <img src="logo.png" alt="Logo">
-                </div>
-                <div class="search-bar">
-                    <input type="text" placeholder="Search...">
-                    <button type="submit"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="navbar-icons">
-                    <a href="#"><i class="fas fa-shopping-cart"></i></a>
-                    <a href="signup.php"><i class="fas fa-user-circle"></i></a>
-                </div>
-            </nav> -->
-            <div class="content">
-                <!-- Your main content goes here -->
+    </div>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>
+    </div>
+</body>
+</html>
+
             </div>
         </div>
     </div>
