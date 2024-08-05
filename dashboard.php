@@ -45,7 +45,7 @@ session_start();
             <input type="text" id="price" name="price" required><br>
             <label for="image">Product Image:</label><br>
             <input type="file" id="image" name="image" required><br><br>
-            <label for="name">Description:</label><br>
+            <label for="desc">Description:</label><br>
             <input type="text" id="desc" name="desc" required><br>
             <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" name="quantity" required><br>

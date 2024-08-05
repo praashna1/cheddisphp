@@ -31,6 +31,7 @@ body {
 
 .search-bar input[type="text"] {
     padding: 5px;
+    width: 300px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -88,7 +89,7 @@ body {
 
 /* Main Container Styles */
 .container {
-    width: 80%;
+    width: 100%;
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;

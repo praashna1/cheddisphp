@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
         $sql = "INSERT INTO product (name, price, image, description,quantity, factory_id) VALUES (?,?,?,?,?,?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sdsdii", $name, $price, $image, $desc, $quantity, $factory_id);
+        $stmt->bind_param("sdssii", $name, $price, $image, $desc, $quantity, $factory_id);
             
         if($stmt->execute()){
             echo "New product uploaded successfully";
