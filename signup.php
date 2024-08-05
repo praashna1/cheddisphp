@@ -24,7 +24,25 @@
                             <label for="confirmPassword">Confirm Password:</label>
                             <input type="password" name="confirmPassword" id="confirmPassword" required>
                         </div>
-                        
+<!--                     
+                        <script>
+    document.getElementById("username").addEventListener("input", function () {
+        var username = this.value;
+        var pattern = /^[a-zA-Z0-9]+$/;
+        if (!pattern.test(username)) {
+            alert("Username should not contain special characters or spaces.");
+            this.value = "";
+        }
+    });
+
+    document.getElementById("email").addEventListener("input", function () {
+        var email = this.value;
+        var pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!pattern.test(email)) {
+            alert("Please enter a valid email address.");
+        }
+    });
+</script> -->
                         
                         <div class="links">
               <a href="#">Already have an account?</a>

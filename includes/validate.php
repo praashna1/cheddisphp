@@ -61,4 +61,24 @@ function validateEmail($email) {
     }
 }
 
+// if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//     $username = $_POST['username'];
+//     $email = $_POST['email'];
+    
+//     if (!validateUsername($username)) {
+//         echo "Invalid username format. Only alphanumeric characters are allowed.";
+//     } elseif (!validateEmail($email)) {
+//         echo "Invalid email format.";
+//     } else {
+//         // Proceed with registration
+//         $user = getUser($conn, $username);
+//         if ($user) {
+//             echo "Username already exists.";
+//         } else {
+//             // Register the user
+//             // Insert code to handle registration
+//         }
+//     }
+// }
+
 ?>

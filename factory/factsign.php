@@ -1,5 +1,5 @@
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../style.css">
 <body>
 <section>
 <div class="signin">
