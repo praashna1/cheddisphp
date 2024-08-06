@@ -7,7 +7,7 @@
             <h2>Login</h2>
             <div class="form">
                 <div class="inputBox">
-                    <form action="factloginpro.php" method="post" class="form" id="login-form">
+                    <form action="factlogipro.php" method="post" class="form" id="login-form">
                     <div>
                         <label for="name">Username:</label>
                         <input type="text" name="name" id="name" required>

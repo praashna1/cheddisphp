@@ -56,21 +56,21 @@ let currentImageIndex = 0;
     <h1>Welcome to the Candy Shop!</h1>
     <!-- <div class="products"> -->
        
-        <!-- // if ($result->num_rows > 0) {
-        //     while ($row = $result->fetch_assoc()) {
-        //         echo "<div class='product'>";
-        //         echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "'>";
-        //         echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
-        //         echo "<p>" . htmlspecialchars($row['description']) . "</p>";
-        //         echo "<p>Price: $" . htmlspecialchars($row['price']) . "</p>";
-        //         echo "<p>" . htmlspecialchars($row['quantity']) . "</p>";
-        //         echo "<p>Factory: " . htmlspecialchars($row['factory_name']) . "</p>";
-        //         echo "</div>";
-        //     }
-        // } else {
-        //     echo "No products available.";
-        // }
-        // $conn->close(); -->
+         <!-- if ($result->num_rows > 0) {
+             while ($row = $result->fetch_assoc()) {
+                 echo "<div class='product'>";
+                 echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "'>";
+               echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
+                 echo "<p>" . htmlspecialchars($row['description']) . "</p>";
+                 echo "<p>Price: $" . htmlspecialchars($row['price']) . "</p>";
+               echo "<p>" . htmlspecialchars($row['quantity']) . "</p>";
+                echo "<p>Factory: " . htmlspecialchars($row['factory_name']) . "</p>";
+                echo "</div>";
+            }
+     } else {
+             echo "No products available.";
+         }
+        $conn->close(); -->
         
         <div id="live-banner" class="live-banner">Welcome! Today is ...</div>
         <div id="picture-banner" class="picture-banner">

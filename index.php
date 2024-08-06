@@ -55,7 +55,7 @@ let currentImageIndex = 0;
     </script>
 </head>
 <body>
-    <h1>Welcome to the Cheddis</h1>
+   
     <!-- <div class="products"> -->
        
         <!-- // if ($result->num_rows > 0) {
@@ -86,6 +86,7 @@ let currentImageIndex = 0;
             <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div class="product-card">
+                    <a href="productinfo.php?product_id=<?php echo htmlspecialchars($row['product_id']); ?>">
                         <img src="img/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
                         <div class="product-info">
                             <h2><?php echo htmlspecialchars($row['name']); ?></h2>

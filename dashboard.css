@@ -10,17 +10,18 @@ body {
     color: #fff;
     padding: 10px 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+   
     align-items: center;
     border-bottom: 2px solid #555;
-    position: sticky;
+    
     top: 0;
     z-index: 1000;
 }
 
-.navbar-logo img {
+/* .navbar-logo img {
     height: 50px;
-}
+} */
 
 .navbar-links a {
     color: #fff;

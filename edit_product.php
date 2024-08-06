@@ -1,6 +1,8 @@
 <?php
 // Database connection
+require 'factory.php';
 require 'includes/database.php';
+
 $conn = getDB();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

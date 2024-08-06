@@ -1,12 +1,18 @@
 <?php
 // Database connection
+ require 'factory.php';
 require 'includes/database.php';
+
 $conn = getDB();
+
+
 
 // Fetch products from the database
 $sql = "SELECT product_id, name, description, price, image, quantity FROM product WHERE factory_id = ?";
 $stmt = $conn->prepare($sql);
-$factory_id = 1; // Replace with the logged-in factory's ID
+if (isset($_SESSION['factory_id'])) {
+    $factory_id = $_SESSION['factory_id'];
+// $factory_id = 1; // Replace with the logged-in factory's ID
 $stmt->bind_param("i", $factory_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -15,6 +21,7 @@ $result = $stmt->get_result();
 if (!$result) {
     echo "Error: " . $conn->error;
     exit;
+}
 }
 ?>
 
@@ -29,7 +36,9 @@ if (!$result) {
 </head>
 <body>
     <h1>Manage Your Products</h1>
+    <a href="dashboard.php" class="btn">Add New Product</a>
     <div class="product-grid">
+        
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="product-card">

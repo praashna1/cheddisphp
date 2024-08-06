@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_start();
                 $_SESSION['factory_id'] = $user['factory_id'];
                 $_SESSION['name'] = $user['name'];
-                header("Location: factorydashboard.php");
+                header("Location: product.php");
                 exit();
                
             } else {
