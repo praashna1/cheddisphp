@@ -1,4 +1,4 @@
-/* General Styles */
+/* homepage css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -6,7 +6,6 @@ body {
     padding: 0;
 }
 
-/* Navbar Styles */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -21,7 +20,7 @@ body {
 }
 
 .navbar-logo img {
-    height: 40px; /* Adjust size as needed */
+    height: 40px; 
 }
 
 .search-bar {
@@ -59,10 +58,10 @@ body {
 }
 
 .navbar-icons i {
-    font-size: 20px; /* Adjust size as needed */
+    font-size: 20px; 
 }
 
-/* Live Banner Styles */
+/* Live Banner design */
 .live-banner {
     background-color: #333;
     color: #fff;
@@ -73,10 +72,10 @@ body {
     border-bottom: 2px solid #555;
 }
 
-/* Picture Banner Styles */
+/* below live banner picture banner  */
 .picture-banner {
     width: 100%;
-    max-height: 100vh; /* Adjust the height as needed */
+    max-height: 100vh; 
     overflow: hidden;
     margin-bottom: 20px;
     text-align: center;
@@ -88,7 +87,7 @@ body {
     display: inline-block;
 }
 
-/* Main Container Styles */
+/* all product listing */
 .container {
     width: 100%;
     margin: 20px auto;
@@ -98,13 +97,13 @@ body {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Header Styles */
+/* Header Styles
 h1 {
     text-align: center;
     color: #333;
-}
+} */
 
-/* Product Grid and Card Styles */
+/* product and product card */
 .product-grid {
     display: flex;
     flex-wrap: wrap;
