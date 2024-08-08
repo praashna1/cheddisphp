@@ -51,7 +51,7 @@ function getFactory($conn, $email){
 
 function validateEmail($email) {
     // Regular expression pattern for email validation
-    $pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+    $pattern = '/^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
     
     // Validate email address
     if (preg_match($pattern, $email)) {
@@ -61,24 +61,24 @@ function validateEmail($email) {
     }
 }
 
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//     $username = $_POST['username'];
-//     $email = $_POST['email'];
-    
-//     if (!validateUsername($username)) {
-//         echo "Invalid username format. Only alphanumeric characters are allowed.";
-//     } elseif (!validateEmail($email)) {
-//         echo "Invalid email format.";
-//     } else {
-//         // Proceed with registration
-//         $user = getUser($conn, $username);
-//         if ($user) {
-//             echo "Username already exists.";
-//         } else {
-//             // Register the user
-//             // Insert code to handle registration
-//         }
-//     }
-// }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    function validateUsername($username){}
+    if (!validateUsername($username)) {
+        echo "Invalid username format. Only alphanumeric characters are allowed.";
+    } elseif (!validateEmail($email)) {
+        echo "Invalid email format.";
+    } else {
+        // Proceed with registration
+        $user = getUser($conn, $username);
+        if ($user) {
+            echo "Username already exists.";
+        } else {
+            // Register the user
+            // Insert code to handle registration
+        }
+    }
+}
 
 ?>

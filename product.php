@@ -52,6 +52,9 @@ if (!$result) {
                             <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                             <button type="submit">Edit</button>
                         </form>
+                        
+ 
+
                     </div>
                 </div>
             <?php endwhile; ?>

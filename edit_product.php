@@ -1,14 +1,22 @@
 <?php
+
 // Database connection
 require 'factory.php';
 require 'includes/database.php';
 
 $conn = getDB();
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $product_id = $_GET['product_id'];
+$product = null;
+$message = ""; // Initialize message variable
 
-    // Fetch product details from the database
+// Fetch product details
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $product_id = $_GET['product_id'] ?? null;
+    if ($product_id == null) {
+        echo "No product ID.";
+        exit;
+    }
+
     $sql = "SELECT product_id, name, description, price, image, quantity FROM product WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $product_id);
@@ -18,11 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($result->num_rows > 0) {
         $product = $result->fetch_assoc();
     } else {
-        echo "Product not found.";
+        $message = "Product not found.";
         exit;
     }
 }
 
+// Update product
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_id = $_POST['product_id'];
     $name = $_POST['name'];
@@ -31,22 +40,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantity = $_POST['quantity'];
     $image = $_FILES['image']['name'] ?: $_POST['current_image'];
 
-    // Update product in the database
     $sql = "UPDATE product SET name = ?, description = ?, price = ?, image = ?, quantity = ? WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssdsii", $name, $description, $price, $image, $quantity, $product_id);
+
     if ($stmt->execute()) {
-        // If image was updated, move the new file
         if (!empty($_FILES['image']['name'])) {
             $target_dir = "img/";
             $target_file = $target_dir . basename($image);
-            move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                $message = "Product updated successfully.";
+            } else {
+                $message = "Error uploading image.";
+            }
+        } else {
+            $message = "Product updated successfully.";
         }
 
-        echo "Product updated successfully.";
+        // Redirect to the same page with the product_id
+        header("Location: edit_product.php?product_id=" . $product_id . "&message=" . urlencode($message));
+        exit;
     } else {
-        echo "Error updating product: " . $conn->error;
+        $message = "Error updating product: " . $conn->error;
     }
+}
+
+// Check for message in URL
+if (isset($_GET['message'])) {
+    $message = urldecode($_GET['message']);
 }
 
 // Close the database connection
@@ -63,10 +84,19 @@ $conn->close();
 </head>
 <body>
     <h1>Edit Product</h1>
+
+    <!-- Display the message -->
+    <div id="message">
+        <?php if (!empty($message)): ?>
+            <p><?php echo htmlspecialchars($message); ?></p>
+        <?php endif; ?>
+    </div>
+
+    <?php if ($product): ?>
     <form action="edit_product.php" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
-        <input type="hidden" name="current_image" value="<?php echo $product['image']; ?>">
-        
+        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
+        <input type="hidden" name="current_image" value="<?php echo htmlspecialchars($product['image']); ?>">
+
         <label for="name">Product Name:</label>
         <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required>
 
@@ -81,9 +111,14 @@ $conn->close();
 
         <label for="image">Product Image:</label>
         <input type="file" id="image" name="image">
-        <img src="img/<?php echo htmlspecialchars($product['image']); ?>" alt="Current Image" style="max-width: 100px;">
+        <?php if ($product['image']): ?>
+            <img src="img/<?php echo htmlspecialchars($product['image']); ?>" alt="Current Image" style="max-width: 100px;">
+        <?php endif; ?>
 
         <button type="submit">Update Product</button>
     </form>
+    <?php else: ?>
+        <p>Product details could not be retrieved.</p>
+    <?php endif; ?>
 </body>
 </html>
