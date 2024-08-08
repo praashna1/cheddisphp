@@ -82,45 +82,11 @@ require 'factory.php';
             <input type="text" id="desc" name="desc" required><br>
             <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" name="quantity" required><br>
-            <input type="submit" value="Upload Product">
+          
+        <input type="submit" value="Upload Product">
         </form>
         
-        <!-- Orders Table -->
-        <h2>Orders</h2>
-        <table>
-            <tr>
-                <th>Order ID</th>
-                <th>Customer Name</th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Order Date</th>
-            </tr>
-            <?php
-            require 'includes/database.php';
-            $conn = getDB();
-            $sql = "SELECT orders.id, customers.name as customer_name, products.name as product_name, orders.quantity, orders.total_price, orders.order_date 
-                    FROM orders 
-                    JOIN customers ON orders.customer_id = customers.id 
-                    JOIN products ON orders.product_id = products.id";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>".$row['id']."</td>
-                            <td>".$row['customer_name']."</td>
-                            <td>".$row['product_name']."</td>
-                            <td>".$row['quantity']."</td>
-                            <td>".$row['total_price']."</td>
-                            <td>".$row['order_date']."</td>
-                          </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='6'>No orders found</td></tr>";
-            }
-            ?>
-        </table>
+       
     </div>
 </body>
 </html>

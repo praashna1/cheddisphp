@@ -40,11 +40,12 @@ session_start();
                     // User is logged in
                     $username = $_SESSION['username'];
                     echo '<a href="profile.php">Welcome, ' . htmlspecialchars($username) . '!</a>';
-                    echo '<a href="#"><i class="fas fa-shopping-cart"></i>';
+                    echo '<a href="cart.php"><i class="fas fa-shopping-cart"></i>';
                     echo '<a href="logout.php">Logout</a>';
                 } else {
                     // User is not logged in
-                    echo '<a href="#"><i class="fas fa-shopping-cart"></i>';
+                    echo '<a href="cart.php"><i class="fas fa-shopping-cart">
+</i>';
                     echo ' <a href="signup.php"><i class="fas fa-user-circle"></i></a>';
                 }
                 ?>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="cart.js" defer>
+        // Function to add item to cart
+function addToCart(productId, name, price, image, quantity) {
+    // Get cart from localStorage or initialize empty cart
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    // Update cart with new item
+    if (cart[productId]) {
+        cart[productId].quantity += quantity;
+    } else {
+        cart[productId] = { name, price, image, quantity };
+    }
+
+    // Save cart to localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Function to display cart items
+function displayCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    let cartContainer = document.getElementById('cart-items');
+
+    if (Object.keys(cart).length === 0) {
+        cartContainer.innerHTML = 'Your cart is empty.';
+        return;
+    }
+
+    let html = '';
+    let total = 0;
+
+    for (let productId in cart) {
+        let item = cart[productId];
+        let itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        html += `
+            <tr>
+                <td><img src="img/${item.image}" alt="${item.name}" width="100"></td>
+                <td>${item.name}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>$${itemTotal.toFixed(2)}</td>
+                <td>
+                    <button onclick="updateQuantity('${productId}', -1)">-</button>
+                    <button onclick="updateQuantity('${productId}', 1)">+</button>
+                </td>
+                <td><button onclick="removeFromCart('${productId}')">Remove</button></td>
+            </tr>
+        `;
+    }
+
+    html += `
+        <tr>
+            <td colspan="4">Total</td>
+            <td>$${total.toFixed(2)}</td>
+        </tr>
+    `;
+
+    cartContainer.innerHTML = html;
+}
+
+// Function to update quantity of item in cart
+function updateQuantity(productId, change) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    if (cart[productId]) {
+        cart[productId].quantity += change;
+
+        if (cart[productId].quantity <= 0) {
+            delete cart[productId];
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart();
+    }
+}
+
+// Function to remove item from cart
+function removeFromCart(productId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    delete cart[productId];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    displayCart();
+}
+
+// Call displayCart on page load
+window.onload = displayCart;
+
+    </script>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <table id="cart-items">
+        <!-- Cart items will be dynamically inserted here -->
+    </table>
+    <a href="checkout.php">Proceed to Checkout</a>
+    <a href="index.php">Continue Shopping</a>
+</body>
+</html>

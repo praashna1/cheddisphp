@@ -1,8 +1,10 @@
+
 <?php
 
 // Database connection
 require 'factory.php';
 require 'includes/database.php';
+
 
 $conn = getDB();
 
@@ -52,9 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = "Product updated successfully.";
             } else {
                 $message = "Error uploading image.";
+                $messageClass = "error";
             }
         } else {
             $message = "Product updated successfully.";
+            $messageClass = "success";
         }
 
         // Redirect to the same page with the product_id
@@ -86,7 +90,7 @@ $conn->close();
     <h1>Edit Product</h1>
 
     <!-- Display the message -->
-    <div id="message">
+    <div id="message" class="<?php echo htmlspecialchars($messageClass); ?>">
         <?php if (!empty($message)): ?>
             <p><?php echo htmlspecialchars($message); ?></p>
         <?php endif; ?>

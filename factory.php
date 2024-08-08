@@ -20,7 +20,7 @@ session_start();
         <div class="navbar-links">
             <a href="product.php">Dashboard</a>
             <!-- <a href="product.php">Products</a> -->
-            <a href="orders.php">Orders</a>
+            <a href="order.php">Orders</a>
             <a href="profile.php">Profile</a>
             <?php
                 if (isset($_SESSION['name'])) {

@@ -32,7 +32,7 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factory Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="">
 </head>
 <body>
     <h1>Manage Your Products</h1>
@@ -52,7 +52,10 @@ if (!$result) {
                             <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                             <button type="submit">Edit</button>
                         </form>
-                        
+                        <form action="delete_product.php" method="post" style="display: inline-block;">
+                            <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+                            <button type="submit" class="delete" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
+                        </form>
  
 
                     </div>

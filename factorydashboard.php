@@ -1,16 +1,6 @@
-<?php require 'factory.php'?>
-           
-            <?php
- $db_host="localhost";
- $db_user="root";
- $db_pass="root";
- $db_name="cheddis";
-
- $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+<?php require 'factory.php'
 ?>
+ 
 
 
     <div class="container">
@@ -64,34 +54,7 @@ if ($conn->connect_error) {
 
         
 
-        <!-- Example Section: Orders -->
-        <section id="orders">
-            <h2>Orders</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Product</th>
-                        <th>Customer</th>
-                        <th>Quantity</th>
-                        <th>Total Price</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Example row -->
-                    <tr>
-                        <td>#1234</td>
-                        <td>Example Candy</td>
-                        <td>John Doe</td>
-                        <td>2</td>
-                        <td>$10.00</td>
-                        <td>Shipped</td>
-                    </tr>
-                    <!-- Additional rows will be populated from the database -->
-                </tbody>
-            </table>
-        </section>
+       
     </div>
 </body>
 </html>

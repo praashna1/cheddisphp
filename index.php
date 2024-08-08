@@ -82,7 +82,9 @@ let currentImageIndex = 0;
     </div>
         <div class="container">
         <h1>Our Candies</h1>
+        
         <div class="product-grid">
+            
             <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div class="product-card">
@@ -93,13 +95,15 @@ let currentImageIndex = 0;
                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                             <p>Price: $<?php echo number_format($row['price'], 2); ?></p>
                             <p>Available Quantity: <?php echo htmlspecialchars($row['quantity']); ?></p>
-                            <form action="cart.php" method="post">
+                            <form action="addcart.php" method="post">
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                 <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($row['quantity']); ?>" value="1">
                                 <button type="submit">Add to Cart</button>
                             </form>
                         </div>
                     </div>
+                    
+
                 <?php endwhile; ?>
             <?php else: ?>
                 <p>No products available.</p>
