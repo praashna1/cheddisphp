@@ -28,12 +28,12 @@ session_start();
         <div class="main-content">
             <nav class="navbar">
                 <div class="navbar-logo">
-                    <img src="logo.png" alt="Logo">
+                    <img src="img/cheddis.png" alt="Logo">
                 </div>
-                <div class="search-bar">
+                <!-- <div class="search-bar">
                     <input type="text" placeholder="Search...">
                     <button type="submit"><i class="fas fa-search"></i></button>
-                </div>
+                </div> -->
                 <div class="navbar-icons">
                 <?php
                 if (isset($_SESSION['username'])) {

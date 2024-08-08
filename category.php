@@ -1,7 +1,7 @@
 <!-- products.php -->
 <?php
 require 'includes/database.php'; // Include your database connection file
-
+$conn=getDB();
 $category_id = $_GET['category_id'] ?? null;
 
 if ($category_id) {
