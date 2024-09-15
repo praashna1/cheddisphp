@@ -1,9 +1,21 @@
 <?php
-session_start();
+session_start(); // You can remove this if you're only using cookies
+
+// Save cart to cookie
+setcookie('cart', json_encode($cart), time() + (86400 * 30), "/"); // 30 days expiration
+
+// Debug: Check if the cart is being stored correctly
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $product_id = $_POST['product_id'];
-    $quantity = $_POST['quantity'];
+    // Validate product ID and quantity
+    if (isset($_POST['product_id'], $_POST['quantity']) && is_numeric($_POST['quantity']) && $_POST['quantity'] > 0) {
+        $product_id = (int)$_POST['product_id'];
+        $quantity = (int)$_POST['quantity'];
+    } else {
+        // Invalid input
+        die("Invalid product or quantity");
+    }
 
     // Fetch product details from the database
     require 'includes/database.php';
@@ -33,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
         }
 
-        // Save cart to cookie
+        // Save cart to cookie (ensure it's within cookie size limit)
         setcookie('cart', json_encode($cart), time() + (86400 * 30), "/"); // 30 days expiration
 
         // Redirect back to the product page or cart page with a success message

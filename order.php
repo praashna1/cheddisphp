@@ -75,7 +75,7 @@ $conn->close();
         <?php foreach ($orders as $order_id => $order): ?>
             <h3>Order ID: <?php echo htmlspecialchars($order_id); ?></h3>
             <p>Customer Name: <?php echo htmlspecialchars($order['info']['customer_name']); ?></p>
-            <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ', ' . htmlspecialchars($order['info']['city']) . ', ' . htmlspecialchars($order['info']['state']) . ' ' . htmlspecialchars($order['info']['zip']) . ', ' . htmlspecialchars($order['info']['country']); ?></p>
+            <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ',  ' . htmlspecialchars($order['info']['country']); ?></p>
             <p>Payment Method: <?php echo htmlspecialchars($order['info']['payment_method']); ?></p>
             <p>Total Amount: $<?php echo number_format($order['info']['total_amount'], 2); ?></p>
             

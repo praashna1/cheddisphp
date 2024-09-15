@@ -14,6 +14,9 @@ if (isset($_GET['product_id'])) {
     // Save updated cart to cookie
     setcookie('cart', json_encode($cart), time() + (86400 * 30), "/"); // 30 days expiration
 }
+// Clear session and logout logic here
+session_unset();
+session_destroy();
 
 // Redirect to cart page after removal
 header("Location: cart.php");

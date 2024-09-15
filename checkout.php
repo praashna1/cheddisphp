@@ -1,13 +1,14 @@
 <?php
 session_start();
 
+// Retrieve cart from cookie
+$cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+
 // Debugging: Output cart data
-echo '<pre>';
-print_r($_SESSION['cart']);
-echo '</pre>';
+
 
 // Ensure that cart data is available
-if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+if (empty($cart)) {
     header("Location: index.php");
     exit;
 }
@@ -27,22 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare("INSERT INTO orders (customer_name, address, country, payment_method, total_amount) VALUES (?, ?, ?, ?, ?)");
     $total_amount = array_sum(array_map(function($item) {
         return $item['price'] * $item['quantity'];
-    }, $_SESSION['cart']));
+    }, $cart));
     $stmt->bind_param('ssssd', $name, $address, $country, $payment_method, $total_amount);
     $stmt->execute();
     $order_id = $stmt->insert_id;
     $stmt->close();
 
     // Insert order items
-    foreach ($_SESSION['cart'] as $product_id => $item) {
+    foreach ($cart as $product_id => $item) {
         $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
         $stmt->bind_param('iiid', $order_id, $product_id, $item['quantity'], $item['price']);
         $stmt->execute();
         $stmt->close();
     }
 
-    // Clear the cart after order submission
-    unset($_SESSION['cart']);
+    // Clear the cart after order submission by unsetting the cookie
+    setcookie('cart', '', time() - 3600, "/"); // Expire the cart cookie
 
     // Redirect to a confirmation page or display a success message
     header("Location: confirmation.php");
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <tbody>
                 <?php
                 $total = 0;
-                foreach ($_SESSION['cart'] as $product_id => $item):
+                foreach ($cart as $product_id => $item):
                     $item_total = $item['price'] * $item['quantity'];
                     $total += $item_total;
                 ?>
@@ -97,4 +98,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <th>$<?php echo number_format($total, 2); ?></th>
                 </tr>
             </tfoot>
-        </tab
+        </table>
+    </div>
+
+    <!-- Checkout Form -->
+    <form action="checkout.php" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br>
+
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" required><br>
+
+        <label for="country">Country:</label>
+        <input type="text" name="country" id="country" required><br>
+
+        <label for="payment_method">Payment Method:</label>
+        <select name="payment_method" id="payment_method" required>
+            <option value="Credit Card">Credit Card</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+        </select><br>
+
+        <button type="submit">Submit Order</button>
+    </form>
+</body>
+</html>

@@ -14,46 +14,37 @@ session_start();
 </head>
 <body>
     <div class="container">
-        <!-- <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="logo.png" alt="Logo">
-            </div>
-            <ul>
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
-        </div> -->
         <div class="main-content">
             <nav class="navbar">
                 <div class="navbar-logo">
-                    <img src="img/cheddis.png" alt="Logo">
+                    <a href="index.php">
+                        <img src="img/cheddis.png" alt="Logo">
+                    </a>
                 </div>
-                <!-- <div class="search-bar">
-                    <input type="text" placeholder="Search...">
-                    <button type="submit"><i class="fas fa-search"></i></button>
-                </div> -->
+
+                <!-- Adding Navbar Links -->
+                <ul class="nav-links">
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="products.php">Products</a></li>
+                    <li><a href="about.php">About</a></li>
+                </ul>
+
+                <!-- User and Cart Icons -->
                 <div class="navbar-icons">
                 <?php
                 if (isset($_SESSION['username'])) {
                     // User is logged in
                     $username = $_SESSION['username'];
                     echo '<a href="profile.php">Welcome, ' . htmlspecialchars($username) . '!</a>';
-                    echo '<a href="cart.php"><i class="fas fa-shopping-cart"></i>';
+                    echo '<a href="cart.php"><i class="fas fa-shopping-cart"></i></a>';
                     echo '<a href="logout.php">Logout</a>';
                 } else {
                     // User is not logged in
-                    echo '<a href="cart.php"><i class="fas fa-shopping-cart">
-</i>';
-                    echo ' <a href="signup.php"><i class="fas fa-user-circle"></i></a>';
+                    echo '<a href="cart.php"><i class="fas fa-shopping-cart"></i></a>';
+                    echo '<a href="signup.php"><i class="fas fa-user-circle"></i></a>';
                 }
                 ?>
                 </div>
-            </nav>
-                    
-                    
-                </ul>
             </nav>
         </div>
 </body>
