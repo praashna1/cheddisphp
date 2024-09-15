@@ -29,9 +29,9 @@ $result = $conn->query($sql);
 
 let currentImageIndex = 0;
         const images = [
-            "img/pinkbanner.jpg",
+            "img/pinky.svg",
             "img/banner.jpg",
-            "img/pinkbanner.jpg"
+            "img/pinky.svg"
         ];
 
         function changeImage() {
@@ -76,7 +76,7 @@ let currentImageIndex = 0;
         
         <div id="live-banner" class="live-banner">Welcome! Today is ...</div>
         <div id="picture-banner" class="picture-banner">
-        <img id="banner-iamge" src="img\pinkbanner.jpg" alt="Special Promotion">
+        <img id="banner-iamge" src="img\pinky.svg" alt="Special Promotion">
        
     </div>
     </div>

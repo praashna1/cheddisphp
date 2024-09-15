@@ -54,13 +54,13 @@ $result_related = $stmt_related->get_result();
     <h2>You Might Be Interested In</h2>
     <div class="related-products">
         <?php while ($related = $result_related->fetch_assoc()): ?>
-            <div class="related-product-card">
+            <div class="related-product-card"> 
                 <a href="productinfo.php?product_id=<?php echo $related['product_id']; ?>">
                     <img src="img/<?php echo htmlspecialchars($related['image']); ?>" alt="<?php echo htmlspecialchars($related['name']); ?>">
                     <div class="related-product-info">
                         <h3><?php echo htmlspecialchars($related['name']); ?></h3>
                         <p>Price: $<?php echo number_format($related['price'], 2); ?></p>
-                        <form action="cart.html" method="post">
+                        <form action="cart.php" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                 <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($product['quantity']); ?>" value="1">
                 <button type="submit">Add to Cart</button>
