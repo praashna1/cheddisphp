@@ -9,6 +9,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$user_id = $_SESSION['user_id'];  // Get the logged-in user's ID
+
 // Retrieve cart from cookie
 $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 
@@ -26,10 +28,10 @@ $total_amount = array_sum(array_map(function($item) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert order into the database
     $conn = getDB();
-    $stmt = $conn->prepare("INSERT INTO orders (customer_name, address, country, payment_method, total_amount) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param('ssssd', $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('issssd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount);
     $stmt->execute();
-    $order_id = $stmt->insert_id;
+    $order_id = $stmt->insert_id;  // Get the inserted order ID
     $stmt->close();
 
     // Insert order items
@@ -41,16 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Clear the cart
-    setcookie('cart', '', time() - 3600, "/"); // Clear cart cookie after submitting order
+    setcookie('cart', '', time() - 3600, "/");  // Clear cart cookie after submitting order
 
     // If payment method is eSewa, redirect to eSewa's payment page
     if ($_POST['payment_method'] == 'eSewa') {
-         $encoded_total = urlencode($total_amount); // Ensure correct encoding of amount
-    $encoded_order_id = urlencode($order_id);
+        $encoded_total = urlencode($total_amount); // Ensure correct encoding of amount
+        $encoded_order_id = urlencode($order_id);
         // Redirect to the eSewa payment gateway with required parameters
         header("Location: esewa_payment.php?total=$total_amount&order_id=$order_id");
         exit;
-    } 
+    }
 }
 ?>
 
