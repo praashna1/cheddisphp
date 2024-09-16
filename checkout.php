@@ -1,35 +1,33 @@
 <?php
 session_start();
+require 'includes/database.php'; // Include your database connection file
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['message'] = "Please log in to place an order.";
+    header("Location: login.php");
+    exit;
+}
 
 // Retrieve cart from cookie
 $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 
-// Debugging: Output cart data
-
-
-// Ensure that cart data is available
 if (empty($cart)) {
     header("Location: index.php");
     exit;
 }
 
-// Handle form submission
+// Calculate total amount from cart items
+$total_amount = array_sum(array_map(function($item) {
+    return $item['price'] * $item['quantity'];
+}, $cart));
+
+// Handle form submission (if user submits billing details and selects payment)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate form data
-    $name = $_POST['name'];
-    $address = $_POST['address'];
-    $country = $_POST['country'];
-    $payment_method = $_POST['payment_method'];
-
-    require 'includes/database.php';
+    // Insert order into the database
     $conn = getDB();
-
-    // Insert order details
     $stmt = $conn->prepare("INSERT INTO orders (customer_name, address, country, payment_method, total_amount) VALUES (?, ?, ?, ?, ?)");
-    $total_amount = array_sum(array_map(function($item) {
-        return $item['price'] * $item['quantity'];
-    }, $cart));
-    $stmt->bind_param('ssssd', $name, $address, $country, $payment_method, $total_amount);
+    $stmt->bind_param('ssssd', $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount);
     $stmt->execute();
     $order_id = $stmt->insert_id;
     $stmt->close();
@@ -42,12 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
 
-    // Clear the cart after order submission by unsetting the cookie
-    setcookie('cart', '', time() - 3600, "/"); // Expire the cart cookie
+    // Clear the cart
+    setcookie('cart', '', time() - 3600, "/"); // Clear cart cookie after submitting order
 
-    // Redirect to a confirmation page or display a success message
-    header("Location: confirmation.php");
-    exit;
+    // If payment method is eSewa, redirect to eSewa's payment page
+    if ($_POST['payment_method'] == 'eSewa') {
+         $encoded_total = urlencode($total_amount); // Ensure correct encoding of amount
+    $encoded_order_id = urlencode($order_id);
+        // Redirect to the eSewa payment gateway with required parameters
+        header("Location: esewa_payment.php?total=$total_amount&order_id=$order_id");
+        exit;
+    } 
 }
 ?>
 
@@ -57,19 +60,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Checkout</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Your CSS here */
-    </style>
 </head>
 <body>
-    <h1>Checkout</h1>
+<h1>Checkout</h1>
 
+<div class="checkout-container">
+    <!-- Billing Details Form -->
+    <div class="billing-details">
+        <h2>Billing Details</h2>
+        <form action="checkout.php" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
+
+            <label for="address">Address:</label>
+            <input type="text" name="address" id="address" required>
+
+            <label for="country">Country:</label>
+            <input type="text" name="country" id="country" required>
+
+            <label for="payment_method">Payment Method:</label>
+            <select name="payment_method" id="payment_method" required>
+                <option value="eSewa">eSewa</option>
+                <!-- Add other payment methods here if necessary -->
+            </select>
+
+            <button type="submit">Submit Order</button>
+        </form>
+    </div>
+
+    <!-- Cart Summary -->
     <div class="cart-summary">
         <h2>Cart Summary</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Image</th>
                     <th>Name</th>
                     <th>Price</th>
                     <th>Quantity</th>
@@ -79,47 +103,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <tbody>
                 <?php
                 $total = 0;
-                foreach ($cart as $product_id => $item):
+                foreach ($cart as $item):
                     $item_total = $item['price'] * $item['quantity'];
                     $total += $item_total;
                 ?>
-                    <tr>
-                        <td><img src="img/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" width="100"></td>
-                        <td><?php echo htmlspecialchars($item['name']); ?></td>
-                        <td>$<?php echo number_format($item['price'], 2); ?></td>
-                        <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                        <td>$<?php echo number_format($item_total, 2); ?></td>
-                    </tr>
+                <tr>
+                    <td><?php echo htmlspecialchars($item['name']); ?></td>
+                    <td>₨<?php echo number_format($item['price'], 2); ?></td>
+                    <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                    <td>₨<?php echo number_format($item_total, 2); ?></td>
+                </tr>
                 <?php endforeach; ?>
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="4">Total</th>
-                    <th>$<?php echo number_format($total, 2); ?></th>
+                    <th colspan="3">Total</th>
+                    <th>₨<?php echo number_format($total, 2); ?></th>
                 </tr>
             </tfoot>
         </table>
     </div>
-
-    <!-- Checkout Form -->
-    <form action="checkout.php" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required><br>
-
-        <label for="address">Address:</label>
-        <input type="text" name="address" id="address" required><br>
-
-        <label for="country">Country:</label>
-        <input type="text" name="country" id="country" required><br>
-
-        <label for="payment_method">Payment Method:</label>
-        <select name="payment_method" id="payment_method" required>
-            <option value="Credit Card">Credit Card</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Bank Transfer">Bank Transfer</option>
-        </select><br>
-
-        <button type="submit">Submit Order</button>
-    </form>
+</div>
 </body>
 </html>

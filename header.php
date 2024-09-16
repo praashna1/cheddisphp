@@ -25,8 +25,9 @@ session_start();
                 <!-- Adding Navbar Links -->
                 <ul class="nav-links">
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="products.php">Products</a></li>
-                    <li><a href="about.php">About</a></li>
+                    <li><a href="userproduct.php">Products</a></li>
+                    <li><a href="aboutus.php">About</a></li>
+                    <li><a href="user_order.php">My Orders</a></li>
                 </ul>
 
                 <!-- User and Cart Icons -->

@@ -1,4 +1,4 @@
-<?php
+<?php 
 require 'factory.php';
 require 'includes/database.php';
 $conn = getDB();
@@ -12,7 +12,7 @@ if (!isset($_SESSION['factory_id'])) {
 $factory_id = $_SESSION['factory_id'];
 
 // Fetch orders for products from the factory
-$sql = "SELECT o.order_id, o.customer_name, o.address, o.country, o.payment_method, o.total_amount,
+$sql = "SELECT o.order_id, o.customer_name, o.address, o.country, o.payment_method, o.total_amount, o.order_status,
                oi.product_id, p.name AS product_name, oi.quantity, oi.price, (oi.quantity * oi.price) AS item_total
         FROM orders o
         JOIN order_items oi ON o.order_id = oi.order_id
@@ -30,10 +30,10 @@ while ($row = $result->fetch_assoc()) {
     $orders[$row['order_id']]['info'] = [
         'customer_name' => $row['customer_name'],
         'address' => $row['address'],
-        
         'country' => $row['country'],
         'payment_method' => $row['payment_method'],
         'total_amount' => $row['total_amount'],
+        'status' => $row['order_status'],
     ];
 }
 
@@ -45,9 +45,14 @@ $conn->close();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
+    <title>Factory Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
         .order-details {
             width: 100%;
             border-collapse: collapse;
@@ -63,44 +68,79 @@ $conn->close();
         .order-details th {
             background-color: #f4f4f4;
         }
+
+        .order-header {
+            margin-bottom: 10px;
+        }
+
+        .order-header h3 {
+            margin: 0;
+        }
+
+        .order-header p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .status-form {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-   
     <h2>Your Orders</h2>
     
     <?php if (empty($orders)): ?>
         <p>No orders yet.</p>
     <?php else: ?>
         <?php foreach ($orders as $order_id => $order): ?>
-            <h3>Order ID: <?php echo htmlspecialchars($order_id); ?></h3>
-            <p>Customer Name: <?php echo htmlspecialchars($order['info']['customer_name']); ?></p>
-            <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ',  ' . htmlspecialchars($order['info']['country']); ?></p>
-            <p>Payment Method: <?php echo htmlspecialchars($order['info']['payment_method']); ?></p>
-            <p>Total Amount: $<?php echo number_format($order['info']['total_amount'], 2); ?></p>
+            <div class="order-header">
+                
+                <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ', ' . htmlspecialchars($order['info']['country']); ?></p>
+                <p>Payment Method: <?php echo htmlspecialchars($order['info']['payment_method']); ?></p>
+                <p>Total Amount: Rs.<?php echo number_format($order['info']['total_amount'], 2); ?></p>
+               
+                
+                <!-- Status Update Form -->
+                <form method="post" action="update_status.php" class="status-form">
+                    <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($order_id); ?>">
+                    <label for="status">Update Status:</label>
+                    <select name="status" id="status">
+                        <option value="In Process" <?php echo $order['info']['status'] == 'In Process' ? 'selected' : ''; ?>>In Process</option>
+                        <option value="Delivered" <?php echo $order['info']['status'] == 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
+                        <option value="Cancelled" <?php echo $order['info']['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                    </select>
+                    <button type="submit">Update Status</button>
+                </form>
+            </div>
             
             <table class="order-details">
                 <thead>
                     <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
                         <th>Product Name</th>
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Total</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($order['details'] as $item): ?>
                         <tr>
+                        <td> <?php echo htmlspecialchars($order_id); ?></td>
+                        <td> <?php echo htmlspecialchars($order['info']['customer_name']); ?></td>
                             <td><?php echo htmlspecialchars($item['product_name']); ?></td>
                             <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                            <td>$<?php echo number_format($item['price'], 2); ?></td>
-                            <td>$<?php echo number_format($item['item_total'], 2); ?></td>
+                            <td>Rs.<?php echo number_format($item['price'], 2); ?></td>
+                            <td>Rs.<?php echo number_format($item['item_total'], 2); ?></td>
+                            <td> <?php echo htmlspecialchars($order['info']['status']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endforeach; ?>
     <?php endif; ?>
-
 </body>
 </html>
