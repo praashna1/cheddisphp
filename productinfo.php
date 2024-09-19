@@ -43,7 +43,7 @@ $result_related = $stmt_related->get_result();
             <p><?php echo htmlspecialchars($product['description']); ?></p>
             <p>Price: $<?php echo number_format($product['price'], 2); ?></p>
             <p>Available Quantity: <?php echo htmlspecialchars($product['quantity']); ?></p>
-            <form action="cart.php" method="post">
+            <form action="addcart.php" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                 <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($product['quantity']); ?>" value="1">
                 <button type="submit">Add to Cart</button>

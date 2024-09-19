@@ -44,42 +44,67 @@ $conn->close();
             margin: 20px;
         }
 
-        .product-list {
-            display: flex;
-            flex-wrap: wrap;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .product-item {
+        table, th, td {
             border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            width: 200px;
-            text-align: center;
         }
 
-        .product-item img {
-            max-width: 100%;
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            max-width: 100px;
             height: auto;
+        }
+
+        .no-products {
+            color: #ff0000;
+            font-size: 18px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h2>Your Ordered Products</h2>
-    
+    <h2>My Order</h2>
+
     <?php if (empty($ordered_products)): ?>
-        <p>You haven't ordered any products yet.</p>
+        <p class="no-products">You haven't ordered any products yet.</p>
     <?php else: ?>
-        <div class="product-list">
-            <?php foreach ($ordered_products as $product): ?>
-                <div class="product-item">
-                    <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    <p><?php echo htmlspecialchars($product['description']); ?></p>
-                    <p>$<?php echo number_format($product['price'], 2); ?></p>
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($ordered_products as $product): ?>
+                    <tr>
+                        <td><img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"></td>
+                        <td><?php echo htmlspecialchars($product['name']); ?></td>
+                        <td><?php echo htmlspecialchars($product['description']); ?></td>
+                        <td>$<?php echo number_format($product['price'], 2); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php endif; ?>
 </body>
 </html>
-

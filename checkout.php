@@ -2,7 +2,9 @@
 <?php require 'header.php'; 
 
 require 'includes/database.php'; // Include your database connection file
-
+echo '<pre>';
+print_r($_POST);
+echo '</pre>';
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Please log in to place an order.";
@@ -29,8 +31,8 @@ $total_amount = array_sum(array_map(function($item) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert order into the database
     $conn = getDB();
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('issssd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
+    $stmt->bind_param('issssddd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount, $latitude, $longitude);
     $stmt->execute();
     $order_id = $stmt->insert_id;  // Get the inserted order ID
     $stmt->close();
@@ -63,6 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Checkout</title>
     <link rel="stylesheet" href="styles.css">
+    
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <!-- Add Leaflet Control Geocoder CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  
+  <!-- Optional: Leaflet Geocoding (for reverse geocoding, if needed) -->
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
 </head>
 <body>
 <h1>Checkout</h1>
@@ -86,6 +102,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="eSewa">eSewa</option>
                 <!-- Add other payment methods here if necessary -->
             </select>
+
+  <!-- Your checkout form -->
+
+  <!-- Map container -->
+  <div id="map" style="height: 400px; width: 100%;"></div>
+
+  <!-- Hidden inputs to store the latitude and longitude -->
+  <input type="hidden" id="latitude" name="latitude">
+  <input type="hidden" id="longitude" name="longitude">
+
+  <!-- Your remaining checkout form -->
 
             <button type="submit">Submit Order</button>
         </form>
@@ -127,5 +154,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </table>
     </div>
 </div>
+
+<script>
+  // Initialize the map and set the view to a default location
+  var map = L.map('map').setView([27.7172, 85.3240], 15); // Latitude, Longitude, Zoom
+
+  // Load and display tile layer from OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  // Add a draggable marker to the map at the default location
+  var marker = L.marker([27.7172, 85.3240], {
+    draggable: true
+  }).addTo(map);
+
+  // Function to update the latitude and longitude values
+  function updateLatLng(lat, lng) {
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lng;
+  }
+
+  // When the user clicks on the map, move the marker and update the coordinates
+  map.on('click', function(e) {
+    var clickedLat = e.latlng.lat;
+    var clickedLng = e.latlng.lng;
+    marker.setLatLng([clickedLat, clickedLng]);
+    updateLatLng(clickedLat, clickedLng);
+  });
+
+  // Optionally, update the coordinates when the user drags the marker
+  marker.on('dragend', function(e) {
+    var markerLat = marker.getLatLng().lat;
+    var markerLng = marker.getLatLng().lng;
+    updateLatLng(markerLat, markerLng);
+  });
+
+  // Add the geocoder (search box) to the map
+  var geocoder = L.Control.geocoder({
+    defaultMarkGeocode: false
+  })
+  .on('markgeocode', function(e) {
+    var latlng = e.geocode.center;
+    map.setView(latlng, 15); // Move map to searched location
+    marker.setLatLng(latlng); // Move the marker to the searched location
+    updateLatLng(latlng.lat, latlng.lng); // Update the hidden input fields
+  })
+  .addTo(map);
+
+  // Add search box to the top-left corner
+  L.Control.geocoder().addTo(map);
+</script>
+
 </body>
 </html>
