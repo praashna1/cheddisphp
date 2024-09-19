@@ -87,6 +87,7 @@ $conn->close();
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="container">
     <h1>Edit Product</h1>
 
     <!-- Display the message -->
@@ -124,5 +125,6 @@ $conn->close();
     <?php else: ?>
         <p>Product details could not be retrieved.</p>
     <?php endif; ?>
+    </div>
 </body>
 </html>

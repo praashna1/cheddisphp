@@ -48,70 +48,63 @@ $conn->close();
     <title>Factory Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+        .orders-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adds space between orders */
+    margin: 20px;
+    margin-left: 220px; /* Adjust this to match the width of your sidebar */
+    padding: 20px;
+    width: calc(100% - 220px); /* Ensures the order content takes the remaining space */
+    box-sizing: border-box;
+}
 
-        .order-details {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+.order-header {
+    margin-bottom: 10px;
+}
 
-        .order-details th, .order-details td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
+.order-details {
+    width: 100%; /* Ensures the table takes full width */
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    
+}
 
-        .order-details th {
-            background-color: #f4f4f4;
-        }
+.order-details th, 
+.order-details td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
 
-        .order-header {
-            margin-bottom: 10px;
-        }
+.order-details th {
+    background-color: #f4f4f4;
+}
+.order-header,
+.order-details {
+    margin-bottom: 20px;
+    display: block;
+}
 
-        .order-header h3 {
-            margin: 0;
-        }
 
-        .order-header p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .status-form {
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
     <h2>Your Orders</h2>
-    
+    <div class="orders-container">
     <?php if (empty($orders)): ?>
         <p>No orders yet.</p>
     <?php else: ?>
         <?php foreach ($orders as $order_id => $order): ?>
             <div class="order-header">
                 
-                <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ', ' . htmlspecialchars($order['info']['country']); ?></p>
+                <!-- <p>Address: <?php echo htmlspecialchars($order['info']['address']) . ', ' . htmlspecialchars($order['info']['country']); ?></p>
                 <p>Payment Method: <?php echo htmlspecialchars($order['info']['payment_method']); ?></p>
                 <p>Total Amount: Rs.<?php echo number_format($order['info']['total_amount'], 2); ?></p>
                
-                
+                 -->
                 <!-- Status Update Form -->
-                <form method="post" action="update_status.php" class="status-form">
-                    <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($order_id); ?>">
-                    <label for="status">Update Status:</label>
-                    <select name="status" id="status">
-                        <option value="In Process" <?php echo $order['info']['status'] == 'In Process' ? 'selected' : ''; ?>>In Process</option>
-                        <option value="Delivered" <?php echo $order['info']['status'] == 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
-                        <option value="Cancelled" <?php echo $order['info']['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
-                    </select>
-                    <button type="submit">Update Status</button>
-                </form>
+               
             </div>
             
             <table class="order-details">
@@ -135,12 +128,23 @@ $conn->close();
                             <td><?php echo htmlspecialchars($item['quantity']); ?></td>
                             <td>Rs.<?php echo number_format($item['price'], 2); ?></td>
                             <td>Rs.<?php echo number_format($item['item_total'], 2); ?></td>
-                            <td> <?php echo htmlspecialchars($order['info']['status']); ?></td>
+                            <td>  <form method="post" action="update_status.php" class="status-form">
+                    <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($order_id); ?>">
+                    <label for="status">Update Status:</label>
+                    <select name="status" id="status">
+                        <option value="In Process" <?php echo $order['info']['status'] == 'In Process' ? 'selected' : ''; ?>>In Process</option>
+                        <option value="Delivered" <?php echo $order['info']['status'] == 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
+                        <option value="Cancelled" <?php echo $order['info']['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                    </select>
+                    <button type="submit">Update Status</button>
+                </form></td>
+                <!-- <?php echo htmlspecialchars($order['info']['status']); ?> -->
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endforeach; ?>
     <?php endif; ?>
+    </div>
 </body>
 </html>

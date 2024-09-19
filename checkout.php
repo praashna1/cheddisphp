@@ -1,5 +1,6 @@
-<?php
-session_start();
+
+<?php require 'header.php'; 
+
 require 'includes/database.php'; // Include your database connection file
 
 // Check if the user is logged in

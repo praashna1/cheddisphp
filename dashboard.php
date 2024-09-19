@@ -9,7 +9,7 @@ require 'factory.php';
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
+    <!-- <style>
         .product-details {
     max-width: 800px;
     margin: 20px auto;
@@ -63,7 +63,7 @@ require 'factory.php';
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-    </style>
+    </style> -->
 </head>
 <body>
     <div class="container">

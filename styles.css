@@ -1,4 +1,4 @@
-/* user related product css */
+/* product-info user related product css and uploading product */
 
 h1, h2 {
     text-align: center;
@@ -87,30 +87,23 @@ form input[type="submit"]:hover {
 }
 
 
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
 
 /* Cart Container */
-.container {
+/* .container {
     width: 80%;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-}
+} */
 
 /* Heading */
-h1 {
+/* h1 {
     text-align: center;
     color: #333;
     margin-top: 20px;
-}
+} */
 
 /* Cart Table */
 .cart-table {
@@ -159,7 +152,7 @@ h1 {
     background-color: #c82333;
 }
 
-/* Form Button */
+/* cart update Form Button */
 form button[type="submit"] {
     padding: 10px 20px;
     border: none;
@@ -197,17 +190,7 @@ p {
 
 
 
-
-
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
-
-/* Product Details Section */
+/* Product Details Section after clciking product */
 .product-details {
     display: flex;
     gap: 20px;
@@ -253,7 +236,8 @@ body {
     background-color: #218838;
 }
 
-/* Related Products Section */
+
+/* Related Products Sectionmight be */
 .related-products {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -282,15 +266,15 @@ body {
     font-size: 18px;
 }
 
-.related-product-info p {
+/* .related-product-info p {
     margin: 5px 0;
 }
 
 .related-product-info form {
     margin-top: 10px;
-}
+} */
 
-.related-product-info button {
+ .related-product-info button {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -302,19 +286,17 @@ body {
 
 .related-product-info button:hover {
     background-color: #0069d9;
-}
+} 
 
 
 
-/*homepage*/
+/*homepage and factory product page*/
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
 }
-
-
 
 
 .container {

@@ -27,7 +27,7 @@
                 } else {
                     // User is not logged in
                     
-                    echo ' <a href="factsign.php"><i class="fas fa-user-circle"></i></a>';
+                    echo ' <a href="factsign.php"><i class="fas fa-user-circle"  ></i></a>';
                 }
                 ?>
             </div>

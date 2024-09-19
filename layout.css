@@ -11,6 +11,8 @@ body {
     height: 100vh;
     padding-top: 20px;
     position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .sidebar ul {
@@ -31,7 +33,8 @@ body {
 .main-content {
     margin-left: 200px;
     padding: 20px;
-    width: 100%;
+    width: calc(100% - 500px); /* Adjust width based on the sidebar */
+    box-sizing: border-box;
 }
 
 .header {
