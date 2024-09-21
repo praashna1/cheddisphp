@@ -2,9 +2,7 @@
 <?php require 'header.php'; 
 
 require 'includes/database.php'; // Include your database connection file
-echo '<pre>';
-print_r($_POST);
-echo '</pre>';
+
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Please log in to place an order.";
@@ -29,6 +27,10 @@ $total_amount = array_sum(array_map(function($item) {
 
 // Handle form submission (if user submits billing details and selects payment)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
+    $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
+
     // Insert order into the database
     $conn = getDB();
     $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
@@ -68,16 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-  <!-- Add Leaflet Control Geocoder CSS and JS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
+  
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   
   <!-- Optional: Leaflet Geocoding (for reverse geocoding, if needed) -->
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
 
 </head>
 <body>
@@ -107,15 +105,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <!-- Map container -->
   <div id="map" style="height: 400px; width: 100%;"></div>
-
+    
   <!-- Hidden inputs to store the latitude and longitude -->
   <input type="hidden" id="latitude" name="latitude">
   <input type="hidden" id="longitude" name="longitude">
 
   <!-- Your remaining checkout form -->
+ 
 
             <button type="submit">Submit Order</button>
         </form>
+      
     </div>
 
     <!-- Cart Summary -->
@@ -174,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   function updateLatLng(lat, lng) {
     document.getElementById('latitude').value = lat;
     document.getElementById('longitude').value = lng;
+    console.log("Updated Latitude: " + lat + ", Longitude: " + lng);
   }
 
   // When the user clicks on the map, move the marker and update the coordinates
@@ -204,7 +205,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   .addTo(map);
 
   // Add search box to the top-left corner
-  L.Control.geocoder().addTo(map);
+//   L.Control.geocoder().addTo(map);
+
+
 </script>
 
 </body>

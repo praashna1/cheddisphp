@@ -26,6 +26,7 @@ session_start();
             <li><a href="product.php">Products</a></li>
             <li><a href="order.php">Orders</a></li>
             <li><a href="dashboard.php">Add new Product</a></li>
+            <li><a href="nearest.php">Location</a></li>
             <!-- <li><a href="#">Reports</a></li>
             <li><a href="#">Logout</a></li> -->
        

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factory Dashboard</title>
     <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="styles.css">
     <!-- Add your Chart.js script here -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
