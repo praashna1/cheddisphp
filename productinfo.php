@@ -35,19 +35,26 @@ $result_related = $stmt_related->get_result();
 </head>
 <body>
     <div class="product-details">
+        
         <h1><?php echo htmlspecialchars($product['name']); ?></h1>
         <div class="product-image">
             <img src="img/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
         </div>
         <div class="product-info">
             <p><?php echo htmlspecialchars($product['description']); ?></p>
-            <p>Price: $<?php echo number_format($product['price'], 2); ?></p>
+            <p>Price: Rs.<?php echo number_format($product['price'], 2); ?></p>
             <p>Available Quantity: <?php echo htmlspecialchars($product['quantity']); ?></p>
+            <?php if ($product['quantity'] > 0): ?>
             <form action="addcart.php" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                 <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($product['quantity']); ?>" value="1">
+                
                 <button type="submit">Add to Cart</button>
             </form>
+            <?php else: ?>
+        <!-- Show out of stock message if product quantity is 0 -->
+        <p style="color: red;">Out of Stock</p>
+    <?php endif; ?>
         </div>
     </div>
 
@@ -59,7 +66,7 @@ $result_related = $stmt_related->get_result();
                     <img src="img/<?php echo htmlspecialchars($related['image']); ?>" alt="<?php echo htmlspecialchars($related['name']); ?>">
                     <div class="related-product-info">
                         <h3><?php echo htmlspecialchars($related['name']); ?></h3>
-                        <p>Price: $<?php echo number_format($related['price'], 2); ?></p>
+                        <p>Price: Rs.<?php echo number_format($related['price'], 2); ?></p>
                         <form action="cart.php" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                 <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($product['quantity']); ?>" value="1">

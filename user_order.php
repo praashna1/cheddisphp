@@ -100,7 +100,7 @@ $conn->close();
                         <td><img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"></td>
                         <td><?php echo htmlspecialchars($product['name']); ?></td>
                         <td><?php echo htmlspecialchars($product['description']); ?></td>
-                        <td>$<?php echo number_format($product['price'], 2); ?></td>
+                        <td>Rs.<?php echo number_format($product['price'], 2); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

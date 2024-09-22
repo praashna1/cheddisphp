@@ -18,7 +18,7 @@
         <div class="header">
             <h2>Welcome to Your Dashboard</h2>
             <div class="user-info">
-            <?php
+            <!-- <?php
                 if (isset($_SESSION['name'])) {
                     // User is logged in
                     $username = $_SESSION['name'];
@@ -30,7 +30,7 @@
                     
                     echo ' <a href="factsign.php"><i class="fas fa-user-circle"  ></i></a>';
                 }
-                ?>
+                ?> -->
             </div>
         </div>
         

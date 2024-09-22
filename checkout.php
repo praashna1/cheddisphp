@@ -30,6 +30,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
     $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
+    $conn = getDB();
+    // Before placing the order, check if any product is out of stock
+foreach ($cart as $product_id => $item) {
+  $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
+  $stmt->bind_param('i', $product_id);
+  $stmt->execute();
+  $stmt->bind_result($available_quantity);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($available_quantity < $item['quantity']) {
+      // Product is out of stock, handle error
+      echo "Sorry, the product " . $item['name'] . " is out of stock.";
+      exit;
+  }
+}
 
     // Insert order into the database
     $conn = getDB();
@@ -46,6 +62,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $stmt->close();
     }
+
+    // After inserting the order details
+foreach ($cart as $product_id => $item) {
+  // Reduce the product quantity based on the ordered quantity
+  $stmt = $conn->prepare("UPDATE product SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?");
+  $stmt->bind_param('iii', $item['quantity'], $product_id, $item['quantity']);
+  $stmt->execute();
+
+  // Check if product is now out of stock
+  $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
+  $stmt->bind_param('i', $product_id);
+  $stmt->execute();
+  $stmt->bind_result($current_quantity);
+  $stmt->fetch();
+  $stmt->close();
+
+  // Mark the product as "Out of Stock" if quantity reaches zero
+  if ($current_quantity <= 0) {
+      $stmt = $conn->prepare("UPDATE product SET quantity = 'Out of Stock' WHERE product_id = ?");
+      $stmt->bind_param('i', $product_id);
+      $stmt->execute();
+      $stmt->close();
+  }
+}
 
     // Clear the cart
     setcookie('cart', '', time() - 3600, "/");  // Clear cart cookie after submitting order

@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="styles.css">
     <title>About Us - Candy Shop</title>
     <style>
         /* Global Styles */

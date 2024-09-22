@@ -89,7 +89,7 @@ $result = $conn->query($sql);
                 <?php echo htmlspecialchars($row['name']); ?>
             </div>
             <div class="product-price">
-                $<?php echo number_format($row['price'], 2); ?>
+                Rs.<?php echo number_format($row['price'], 2); ?>
             </div>
             <div class="product-actions">
                 <button onclick="addToCart(<?php echo $row['product_id']; ?>)">Add to Cart</button>

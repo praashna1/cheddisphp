@@ -70,13 +70,19 @@ $result = $conn->query($sql);
                             <div class="product-info">
                                 <h2><?php echo htmlspecialchars($row['name']); ?></h2>
                                 <p><?php echo htmlspecialchars($row['description']); ?></p>
-                                <p>Price: $<?php echo number_format($row['price'], 2); ?></p>
+                                <p>Price: Rs.<?php echo number_format($row['price'], 2); ?></p>
                                 <p>Available Quantity: <?php echo htmlspecialchars($row['quantity']); ?></p>
+                                <?php if ($row['quantity'] > 0): ?>
                                 <form action="addcart.php" method="post">
                                     <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                     <input type="number" name="quantity" min="1" max="<?php echo htmlspecialchars($row['quantity']); ?>" value="1">
+                                    
                                     <button type="submit">Add to Cart</button>
                                 </form>
+                                <?php else: ?>
+        <!-- Show out of stock message if product quantity is 0 -->
+        <p style="color: red;">Out of Stock</p>
+    <?php endif; ?>
                             </div>
                         </a>
                     </div>

@@ -3,7 +3,7 @@ require 'factory.php';
 require 'includes/database.php'; // Include your database connection file
 
 // Function to calculate the distance between two points using Haversine formula
-function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
+function Distance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
 {
     $earthRadius = 6371; // Earth radius in kilometers
 
@@ -24,17 +24,23 @@ function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo
 }
 
 // Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['factory_id'])) {
     $_SESSION['message'] = "Please log in to view orders.";
-    header("Location: login.php");
+    header("Location: factlogin.php");
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$factory_id = $_SESSION['factory_id'];
 
 // Fetch order locations from the database
 $conn = getDB();
-$stmt = $conn->prepare("SELECT order_id, latitude, longitude FROM orders");
+$stmt = $conn->prepare("SELECT o.order_id AS order_id, dl.latitude, dl.longitude, oi.product_id
+    FROM orders dl
+    JOIN orders o ON o.order_id = dl.order_id
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN product p ON p.product_id = oi.product_id
+    WHERE p.factory_id = ?");
+    $stmt->bind_param('i', $factory_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -47,18 +53,61 @@ while ($row = $result->fetch_assoc()) {
 $factory_lat = 27.7172; // Example latitude
 $factory_lng = 85.3240; // Example longitude
 
-// Calculate distances to all delivery locations
-$distances = [];
-foreach ($locations as $location) {
-    $distance = haversineGreatCircleDistance($factory_lat, $factory_lng, $location['latitude'], $location['longitude']);
-    $distances[] = ['order_id' => $location['order_id'], 'distance' => $distance];
+// Nearest Neighbor Algorithm to calculate the optimized route
+function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
+    $visited = [];
+    $current_lat = $factory_lat;
+    $current_lng = $factory_lng;
+    $route = [];
+    $total_distance = 0;
+
+    // While there are unvisited locations
+    while (count($visited) < count($locations)) {
+        $nearest_location = null;
+        $nearest_distance = PHP_INT_MAX;
+
+        // Find the nearest unvisited location
+        foreach ($locations as $index => $location) {
+            if (!in_array($index, $visited)) {
+                $distance = Distance($current_lat, $current_lng, $location['latitude'], $location['longitude']);
+                if ($distance < $nearest_distance) {
+                    $nearest_distance = $distance;
+                    $nearest_location = $location;
+                    $nearest_index = $index;
+                }
+            }
+        }
+
+        // Visit the nearest location
+        $route[] = [
+            'order_id' => $nearest_location['order_id'],
+            'distance' => $nearest_distance
+        ];
+        $total_distance += $nearest_distance;
+
+        // Update current position
+        $current_lat = $nearest_location['latitude'];
+        $current_lng = $nearest_location['longitude'];
+
+        // Mark as visited
+        $visited[] = $nearest_index;
+    }
+
+    // Return to factory (round trip)
+    $return_distance = Distance($current_lat, $current_lng, $factory_lat, $factory_lng);
+    $total_distance += $return_distance;
+
+    $route[] = [
+        'order_id' => 'Return to Factory',
+        'distance' => $return_distance
+    ];
+
+    return ['route' => $route, 'total_distance' => $total_distance];
 }
 
-// Sort locations by distance
-usort($distances, function ($a, $b) {
-    return $a['distance'] <=> $b['distance'];
-});
+$optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $locations);
 ?>
+
 // Display results
 <!DOCTYPE html>
 <html lang="en">
@@ -114,14 +163,16 @@ usort($distances, function ($a, $b) {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($distances as $location): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($location['order_id']); ?></td>
-                    <td><?php echo round($location['distance'], 2); ?></td>
-                </tr>
+        <?php foreach ($optimized_route['route'] as $location): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($location['order_id']); ?></td>
+                        <td><?php echo round($location['distance'], 2); ?></td>
+                    </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+    <p><strong>Total Distance: </strong><?php echo round($optimized_route['total_distance'], 2); ?> km</p>
+    
     </div>
 </body>
 </html>
