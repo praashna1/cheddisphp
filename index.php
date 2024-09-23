@@ -15,6 +15,19 @@ $sql = "SELECT product.product_id, product.name, product.description, product.pr
         FROM product
         JOIN factory ON product.factory_id = factory.factory_id";
 $result = $conn->query($sql);
+
+// Fetch the top 3 most sold products (based on total sales or any other metric)
+$topProductsSql = "
+    SELECT p.product_id, p.name, p.description, p.price, p.image, p.quantity, f.name AS factory_name, SUM(oi.quantity) AS total_sales
+    FROM product p
+    JOIN factory f ON p.factory_id = f.factory_id
+    JOIN order_items oi ON p.product_id = oi.product_id
+    GROUP BY p.product_id
+    ORDER BY total_sales DESC
+    LIMIT 3";  // Fetch only top 3 products
+
+$topProductsResult = $conn->query($topProductsSql);
+
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +70,27 @@ $result = $conn->query($sql);
     <div id="picture-banner" class="picture-banner">
         <img id="banner-image" src="img/pinky.svg" alt="Special Promotion">
     </div>
-
     <div class="container">
+    <div class="recommended-section">
+    <h2>Recommended Products</h2>
+    <div class="recommended-products">
+        <?php if ($topProductsResult->num_rows > 0): ?>
+            <?php while ($topProduct = $topProductsResult->fetch_assoc()): ?>
+                <div class="recommended-product-card">
+                    <a href="productinfo.php?product_id=<?php echo htmlspecialchars($topProduct['product_id']); ?>">
+                        <img src="img/<?php echo htmlspecialchars($topProduct['image']); ?>" alt="<?php echo htmlspecialchars($topProduct['name']); ?>">
+                        <h3><?php echo htmlspecialchars($topProduct['name']); ?></h3>
+                        <p>Price: Rs.<?php echo number_format($topProduct['price'], 2); ?></p>
+                    </a>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No recommended products available.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+   
         <h1>Our Candies</h1>
 
         <div class="product-grid">

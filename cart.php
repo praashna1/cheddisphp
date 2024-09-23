@@ -36,11 +36,11 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             <tr class="cart-item">
                                 <td><img src="img/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>"></td>
                                 <td><?php echo htmlspecialchars($item['name']); ?></td>
-                                <td>$<?php echo number_format($item['price'], 2); ?></td>
+                                <td>Rs.<?php echo number_format($item['price'], 2); ?></td>
                                 <td>
                                     <input type="number" name="quantity[<?php echo $product_id; ?>]" value="<?php echo htmlspecialchars($item['quantity']); ?>" min="1">
                                 </td>
-                                <td>$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
+                                <td>Rs.<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
                                 <td>
                                     <button type="button" onclick="removeItem(<?php echo $product_id; ?>)">Remove</button>
                                 </td>

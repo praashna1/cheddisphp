@@ -46,22 +46,33 @@ foreach ($cart as $product_id => $item) {
       exit;
   }
 }
+// Before redirecting to eSewa payment, store order details in session
+$_SESSION['cart'] = $cart;  // Store cart items
+$_SESSION['user_details'] = [
+    'name' => $_POST['name'],
+    'address' => $_POST['address'],
+    'country' => $_POST['country'],
+    'payment_method' => $_POST['payment_method'],
+    'latitude' => $_POST['latitude'],
+    'longitude' => $_POST['longitude'],
+];
 
-    // Insert order into the database
-    $conn = getDB();
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
-    $stmt->bind_param('issssddd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount, $latitude, $longitude);
-    $stmt->execute();
-    $order_id = $stmt->insert_id;  // Get the inserted order ID
-    $stmt->close();
 
-    // Insert order items
-    foreach ($cart as $product_id => $item) {
-        $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param('iiid', $order_id, $product_id, $item['quantity'], $item['price']);
-        $stmt->execute();
-        $stmt->close();
-    }
+    // // Insert order into the database
+    // $conn = getDB();
+    // $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
+    // $stmt->bind_param('issssddd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount, $latitude, $longitude);
+    // $stmt->execute();
+    // $order_id = $stmt->insert_id;  // Get the inserted order ID
+    // $stmt->close();
+
+    // // Insert order items
+    // foreach ($cart as $product_id => $item) {
+    //     $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+    //     $stmt->bind_param('iiid', $order_id, $product_id, $item['quantity'], $item['price']);
+    //     $stmt->execute();
+    //     $stmt->close();
+    // }
 
     // After inserting the order details
 foreach ($cart as $product_id => $item) {
@@ -92,11 +103,12 @@ foreach ($cart as $product_id => $item) {
 
     // If payment method is eSewa, redirect to eSewa's payment page
     if ($_POST['payment_method'] == 'eSewa') {
-        $encoded_total = urlencode($total_amount); // Ensure correct encoding of amount
-        $encoded_order_id = urlencode($order_id);
-        // Redirect to the eSewa payment gateway with required parameters
-        header("Location: esewa_payment.php?total=$total_amount&order_id=$order_id");
-        exit;
+      $encoded_total = urlencode($total_amount);
+      $encoded_order_id = uniqid('order_'); // Generate a unique order ID
+
+      // Redirect to the eSewa payment gateway with required parameters
+      header("Location: esewa_payment.php?total=$encoded_total&order_id=$encoded_order_id&latitude=$latitude&longitude=$longitude");
+      exit;
     }
 }
 ?>

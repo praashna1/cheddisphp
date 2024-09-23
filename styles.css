@@ -190,6 +190,85 @@ p {
 
 
 
+/* recommendation algorithm*/
+.recommended-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.recommended-products {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.recommended-product-card {
+    width: 200px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.recommended-product-card:hover {
+    transform: scale(1.05);
+}
+
+.recommended-product-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.recommended-product-info {
+    padding: 15px;
+}
+
+.recommended-product-info h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.recommended-product-info p {
+    font-size: 1em;
+    color: #555;
+}
+/* notificationdashboard*/
+.notifications {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+}
+
+.notifications ul {
+    list-style: none;
+    padding: 0;
+}
+
+.notifications ul li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notifications ul li a {
+    color: #3498db;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.notifications ul li a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
 /* Product Details Section after clciking product */
 .product-details {
     display: flex;

@@ -10,6 +10,20 @@ if (!isset($_SESSION['factory_id'])) {
 }
 
 $factory_id = $_SESSION['factory_id'];
+// // Example call inside your order placement logic
+// addFactoryNotification($order_id, $factory_id, $conn);
+
+function addFactoryNotification($order_id, $factory_id, $conn) {
+    $message = "You have received a new order (Order ID: {$order_id})";
+    $sql = "INSERT INTO notifications (factory_id, order_id, message, is_read) VALUES (?, ?, ?, 0)";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('iis', $factory_id, $order_id, $message);
+    $stmt->execute();
+    $stmt->close();
+}
+
+
 
 // Fetch orders for products from the factory
 $sql = "SELECT o.order_id, o.customer_name, o.address, o.country, o.payment_method, o.total_amount, o.order_status,
