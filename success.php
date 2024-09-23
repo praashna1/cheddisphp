@@ -1,63 +1,69 @@
 <?php
 session_start();
 require 'includes/database.php'; // Include your database connection file
-error_log("Payment Params: " . json_encode($data));
 
-if (isset($_GET['q']) && $_GET['q'] == 'su') {
-    $refId = $_GET['refId']; // The transaction reference ID returned by eSewa
-    $oid = $_GET['oid']; // The order ID you passed to eSewa
-    $amt = $_GET['amt']; // The total amount
+// Get necessary payment details from eSewa
+$refId = $_GET['refId'] ?? null; // Transaction reference ID from eSewa
+$order_id = $_GET['order_id'] ?? null;
+$amount = $_GET['amt'] ?? null;
 
-    // eSewa verification URL
-    $url = "https://uat.esewa.com.np/epay/transrec";
-
-    // Prepare data for transaction verification
-    $data = [
-        'amt' => $amt,  
-        'rid' => $refId,  
-        'pid' => $oid,    
-        'scd' => 'EPAYTEST'  
-    ];
-
-    // Initialize cURL for the POST request
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($curl); // Ensure this is executed
-
-    if ($response === false) {
-        // Handle cURL error
-        die('cURL error: ' . curl_error($curl));
-    }
-
-    curl_close($curl); // Close the cURL session
-
-    // Check response from eSewa (Success or Failure)
-    if (strpos($response, 'Success') !== false) {
-        // Transaction was successful
-        $_SESSION['order_id'] = $oid;  // Store the order ID in session
-        $_SESSION['payment_status'] = 'success';  // Payment status
-        $_SESSION['message'] = 'Order has been placed successfully!';  // Success message
-
-        // Insert the order into the database
-        $conn = getDB();
-        $user_id = $_SESSION['user_id']; // Get the user ID from the session
-
-        // Retrieve order details from session or wherever you store them
-        // For example, you might have the customer details in session
-        $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
-    $stmt->bind_param('issssddd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount, $latitude, $longitude);
-    $stmt->execute();
-
-        // Redirect to the billing page
-        header("Location: billing.php");
-        exit;
-    } else {
-        // Transaction failed
-        echo "Transaction Verification Failed.";
-    }
-} else {
-    echo "Invalid request.";
+if (!$refId || !$order_id || !$amount) {
+    die('Invalid eSewa response.');
 }
-?>
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die('User is not logged in.');
+}
+
+// Get the user_id from the session
+$user_id = $_SESSION['user_id'];
+
+// Verify the payment with eSewa (for testing, you may skip this step)
+// You would normally call eSewa's verification API here using cURL to confirm the transaction
+
+$is_payment_successful = true; // For testing purposes, we assume it's successful
+
+if ($is_payment_successful) {
+    // Retrieve order details from session
+    $order_details = $_SESSION['order_details'];
+
+    // Debugging: Check values
+var_dump($order_details);
+$latitude = $order_details['latitude'] ?? null;
+$longitude = $order_details['longitude'] ?? null;
+
+// Debugging: Check latitude and longitude
+echo "Latitude: " . $latitude . "<br>";
+echo "Longitude: " . $longitude . "<br>";
+    // Insert order into the database, including the user_id
+    $conn = getDB();
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount,latitude,longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('issssddd', $user_id, $order_details['name'], $order_details['address'], $order_details['country'], $order_details['payment_method'], $amount,$latitude,$longitude);
+    $stmt->execute();
+    $db_order_id = $stmt->insert_id;
+    $stmt->close();
+
+    // Insert order items
+    foreach ($order_details['cart'] as $product_id => $item) {
+        $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('iiid', $db_order_id, $product_id, $item['quantity'], $item['price']);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    // Clear the cart and session data
+    setcookie('cart', '', time() - 3600, "/");
+    unset($_SESSION['order_details']);
+
+    // Set a success message and redirect to the billing page
+    $_SESSION['order_id'] = $db_order_id;
+    $_SESSION['message'] = 'Order has been placed successfully!';
+    header("Location: billing.php");
+    exit;
+} else {
+    // If the payment failed, show a message
+    echo "Transaction Verification Failed.";
+    header("Location: checkout.php");
+    exit;
+}

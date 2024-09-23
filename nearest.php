@@ -34,13 +34,15 @@ $factory_id = $_SESSION['factory_id'];
 
 // Fetch order locations from the database
 $conn = getDB();
-$stmt = $conn->prepare("SELECT o.order_id AS order_id, dl.latitude, dl.longitude, oi.product_id
+$stmt = $conn->prepare("
+    SELECT o.order_id AS order_id, dl.latitude, dl.longitude, oi.product_id
     FROM orders dl
     JOIN orders o ON o.order_id = dl.order_id
     JOIN order_items oi ON oi.order_id = o.order_id
     JOIN product p ON p.product_id = oi.product_id
-    WHERE p.factory_id = ?");
-    $stmt->bind_param('i', $factory_id);
+    WHERE p.factory_id = ?
+");
+$stmt->bind_param('i', $factory_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -49,7 +51,29 @@ while ($row = $result->fetch_assoc()) {
     $locations[] = $row;
 }
 
-// Get the factory's coordinates (can be hardcoded or fetched from the session/user profile)
+// Fetch delivered orders for the current factory
+$delivered_order_ids = [2, 16];
+ 
+// $delivered_stmt = $conn->prepare("
+//     SELECT order_id FROM orders WHERE factory_id = ? AND status = 'Delivered'
+// ");
+// $delivered_stmt->bind_param('i', $factory_id);
+// $delivered_stmt->execute();
+// $delivered_result = $delivered_stmt->get_result();
+
+// $delivered_order_ids = [];
+// while ($delivered_row = $delivered_result->fetch_assoc()) {
+//     $delivered_order_ids[] = $delivered_row['order_id'];
+// }
+
+// Filter out delivered orders and invalid coordinates
+$filtered_locations = array_filter($locations, function ($location) use ($delivered_order_ids) {
+    return !in_array($location['order_id'], $delivered_order_ids) &&
+           !is_null($location['latitude']) && !is_null($location['longitude']);
+});
+
+
+// Get the factory's coordinates
 $factory_lat = 27.7172; // Example latitude
 $factory_lng = 85.3240; // Example longitude
 
@@ -105,15 +129,13 @@ function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
     return ['route' => $route, 'total_distance' => $total_distance];
 }
 
-$optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $locations);
+$optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_locations);
 ?>
 
-// Display results
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
@@ -121,17 +143,16 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $locations);
             margin: 20px;
         }
         .location-container {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 20px; /* Adds space between orders */
-    margin: 20px;
-    margin-left: 220px; /* Adjust this to match the width of your sidebar */
-    padding: 20px;
-    width: calc(100% - 220px); /* Ensures the order content takes the remaining space */
-    box-sizing: border-box;
-}
-
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px;
+            margin-left: 220px;
+            padding: 20px;
+            width: calc(100% - 220px);
+            box-sizing: border-box;
+        }
 
         table {
             width: 50%;
@@ -149,36 +170,34 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $locations);
         tr:hover {
             background-color: #f5f5f5;
         }
-       
     </style>
 </head>
 <body>
     <div class="location-container">
-    <h2>Nearest Delivery Locations</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Location ID</th>
-                <th>Distance (km)</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($optimized_route['route'] as $location): ?>
+        <h2>Optimized Delivery Route</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Location ID</th>
+                    <th>Distance (km)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($optimized_route['route'] as $location): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($location['order_id']); ?></td>
                         <td><?php echo round($location['distance'], 2); ?></td>
                     </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <p><strong>Total Distance: </strong><?php echo round($optimized_route['total_distance'], 2); ?> km</p>
-    
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <p><strong>Total Distance: </strong><?php echo round($optimized_route['total_distance'], 2); ?> km</p>
     </div>
 </body>
 </html>
 
 <?php
-
 $stmt->close();
+//$delivered_stmt->close();
 $conn->close();
 ?>

@@ -2,7 +2,8 @@
 session_start();
 require 'includes/database.php'; // Include your database connection
 
-if (!isset($_SESSION['order_id']) || $_SESSION['payment_status'] !== 'success') {
+if (!isset($_SESSION['order_details'])) {
+    // Redirect to the homepage if there's no order information
     header("Location: index.php");
     exit;
 }

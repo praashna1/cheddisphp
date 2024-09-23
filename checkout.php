@@ -19,7 +19,31 @@ if (empty($cart)) {
     header("Location: index.php");
     exit;
 }
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Validate form data
+  $name = $_POST['name'];
+  $address = $_POST['address'];
+  $country = $_POST['country'];
+  $payment_method = $_POST['payment_method'];
+  $latitude = $_POST['latitude'];
+  $longitude = $_POST['longitude'];
 
+  // Store order details in session for later processing
+  $_SESSION['order_details'] = [
+      'name' => $name,
+      'address' => $address,
+      'country' => $country,
+      'payment_method' => $payment_method,
+      'latitude' => $_POST['latitude'],
+ 'longitude' => $_POST['longitude'],
+      'cart' => $cart
+  ];
+
+  // Redirect to eSewa payment page
+  header("Location: esewa_payment.php");
+  exit;
+}
 // Calculate total amount from cart items
 $total_amount = array_sum(array_map(function($item) {
     return $item['price'] * $item['quantity'];
@@ -47,15 +71,15 @@ foreach ($cart as $product_id => $item) {
   }
 }
 // Before redirecting to eSewa payment, store order details in session
-$_SESSION['cart'] = $cart;  // Store cart items
-$_SESSION['user_details'] = [
-    'name' => $_POST['name'],
-    'address' => $_POST['address'],
-    'country' => $_POST['country'],
-    'payment_method' => $_POST['payment_method'],
-    'latitude' => $_POST['latitude'],
-    'longitude' => $_POST['longitude'],
-];
+// $_SESSION['cart'] = $cart;  // Store cart items
+// $_SESSION['user_details'] = [
+//     'name' => $_POST['name'],
+//     'address' => $_POST['address'],
+//     'country' => $_POST['country'],
+//     'payment_method' => $_POST['payment_method'],
+//     'latitude' => $_POST['latitude'],
+//     'longitude' => $_POST['longitude'],
+// ];
 
 
     // // Insert order into the database
@@ -257,7 +281,7 @@ foreach ($cart as $product_id => $item) {
   .addTo(map);
 
   // Add search box to the top-left corner
-//   L.Control.geocoder().addTo(map);
+  //L.Control.geocoder().addTo(map);
 
 
 </script>
