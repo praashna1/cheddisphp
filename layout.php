@@ -17,7 +17,7 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Function to mark notifications as read (you will implement this in mark_as_read.php)
+// Function to mark notifications as read is in markread.php
 function markNotificationAsRead($notification_id, $conn) {
     $sql = "UPDATE notifications SET is_read = 1 WHERE notification_id = ?";
     $stmt = $conn->prepare($sql);
@@ -26,7 +26,7 @@ function markNotificationAsRead($notification_id, $conn) {
     $stmt->close();
 }
 
-// Total Sales (sum of total_amount for orders related to this factory's products)
+// Total Sales at top of dashboard rectangular box
 $sql_sales = "SELECT SUM(o.total_amount) as total_sales 
               FROM orders o 
               JOIN order_items oi ON o.order_id = oi.order_id
@@ -36,10 +36,10 @@ $stmt_sales = $conn->prepare($sql_sales);
 $stmt_sales->bind_param('i', $factory_id);
 $stmt_sales->execute();
 $result_sales = $stmt_sales->get_result();
-$total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0; // Set default to 0 if no sales
+$total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0; 
 $stmt_sales->close();
 
-// Total Orders (count of distinct orders related to this factory's products)
+// Total Orders 
 $sql_orders = "SELECT COUNT(DISTINCT o.order_id) as total_orders
                FROM orders o 
                JOIN order_items oi ON o.order_id = oi.order_id
@@ -49,8 +49,28 @@ $stmt_orders = $conn->prepare($sql_orders);
 $stmt_orders->bind_param('i', $factory_id);
 $stmt_orders->execute();
 $result_orders = $stmt_orders->get_result();
-$total_orders = $result_orders->fetch_assoc()['total_orders'] ?? 0; // Set default to 0 if no orders
+$total_orders = $result_orders->fetch_assoc()['total_orders'] ?? 0; 
 $stmt_orders->close();
+
+// Fetch product order counts for the factory's products
+$sql_products = "SELECT p.name AS product_name, SUM(oi.quantity) AS total_ordered
+                 FROM order_items oi
+                 JOIN product p ON oi.product_id = p.product_id
+                 WHERE p.factory_id = ?
+                 GROUP BY p.name
+                 ORDER BY total_ordered DESC";
+$stmt_products = $conn->prepare($sql_products);
+$stmt_products->bind_param('i', $factory_id);
+$stmt_products->execute();
+$result_products = $stmt_products->get_result();
+$product_names = [];
+$product_order_counts = [];
+
+while ($row = $result_products->fetch_assoc()) {
+    $product_names[] = $row['product_name'];
+    $product_order_counts[] = $row['total_ordered'];
+}
+$stmt_products->close();
 
 ?>
 
@@ -92,14 +112,15 @@ $stmt_orders->close();
     </div>
 </div>
 
-     
+<div class="charts-container">
         <div class="charts">
             <div class="chart">
                 <canvas id="salesChart"></canvas>
             </div>
             <div class="chart">
-                <canvas id="productsChart"></canvas>
+                <canvas id="productsPieChart"></canvas>
             </div>
+        </div>
         </div>
         <script > // Bar chart for Total Sales and Total Orders
 var ctx = document.getElementById('salesChart').getContext('2d');
@@ -129,6 +150,47 @@ var salesChart = new Chart(ctx, {
         }
     }
 });
+
+// Pie chart for Products Ordered (from most to least)
+var ctxPie = document.getElementById('productsPieChart').getContext('2d');
+var productsPieChart = new Chart(ctxPie, {
+    type: 'pie',
+    data: {
+        labels: <?php echo json_encode($product_names); ?>, // Dynamic product names
+        datasets: [{
+            data: <?php echo json_encode($product_order_counts); ?>, // Dynamic order counts
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.6)', // Colors for the slices of the pie
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top', // Position of the legend
+            },
+            tooltip: {
+                enabled: true // Enable tooltips for better interactivity
+            }
+        }
+    }
+});
+
  </script>
 
         <div class="analytics">
@@ -156,6 +218,6 @@ var salesChart = new Chart(ctx, {
         </div>
     </div>
     
-    <script src="dashboard.js"></script>
+   
 </body>
 </html>
