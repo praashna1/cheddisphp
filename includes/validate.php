@@ -1,6 +1,5 @@
 <?php
 
-
 function getUser($conn, $email){
     $sql = "SELECT * FROM user WHERE username=?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -37,9 +36,9 @@ function getFactory($conn, $email){
             
             // Check if any rows were returned
             if (mysqli_num_rows($result) > 0) {
-                return mysqli_fetch_assoc($result); // User exists
+                return mysqli_fetch_assoc($result); // Factory exists
             } else {
-                return null; // User does not exist
+                return null; // Factory does not exist
             }
         } else {
             echo "Error executing statement: " . mysqli_stmt_error($stmt);
@@ -61,16 +60,38 @@ function validateEmail($email) {
     }
 }
 
+// Function to validate username
+function validateUsername($username) {
+    // Regular expression for alphanumeric username
+    return preg_match('/^[a-zA-Z0-9]+$/', $username);
+}
+
+// Function to validate password
+function validatePassword($password) {
+    // Regular expression pattern for password validation
+    // At least one uppercase letter, one lowercase letter, one number, and one special character
+    $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:"<>?[\];\',.\/`~\\|-]).{8,}$/';
+    
+    // Validate password
+    if (preg_match($pattern, $password)) {
+        return true; // Password is valid
+    } else {
+        return false; // Password is not valid
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    function validateUsername($username){}
+    // Initialize the variables and check if they are set
+    $username = isset($_POST['username']) ? $_POST['username'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+
+    // Validate username
     if (!validateUsername($username)) {
         echo "Invalid username format. Only alphanumeric characters are allowed.";
     } elseif (!validateEmail($email)) {
         echo "Invalid email format.";
     } else {
-        // Proceed with registration
+        // Proceed with user or factory registration based on logic
         $user = getUser($conn, $username);
         if ($user) {
             echo "Username already exists.";
@@ -80,5 +101,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 ?>

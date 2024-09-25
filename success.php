@@ -29,17 +29,14 @@ if ($is_payment_successful) {
     $order_details = $_SESSION['order_details'];
 
     // Debugging: Check values
-var_dump($order_details);
-$latitude = $order_details['latitude'] ?? null;
-$longitude = $order_details['longitude'] ?? null;
+    var_dump($order_details);
+    $latitude = $order_details['latitude'] ?? null;
+    $longitude = $order_details['longitude'] ?? null;
 
-// Debugging: Check latitude and longitude
-echo "Latitude: " . $latitude . "<br>";
-echo "Longitude: " . $longitude . "<br>";
     // Insert order into the database, including the user_id
     $conn = getDB();
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount,latitude,longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('issssddd', $user_id, $order_details['name'], $order_details['address'], $order_details['country'], $order_details['payment_method'], $amount,$latitude,$longitude);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('issssddd', $user_id, $order_details['name'], $order_details['address'], $order_details['country'], $order_details['payment_method'], $amount, $latitude, $longitude);
     $stmt->execute();
     $db_order_id = $stmt->insert_id;
     $stmt->close();
@@ -52,18 +49,30 @@ echo "Longitude: " . $longitude . "<br>";
         $stmt->close();
     }
 
-    // Clear the cart and session data
+    // Clear the cart after order submission
     setcookie('cart', '', time() - 3600, "/");
-    unset($_SESSION['order_details']);
+
+    // Set billing details in the session for billing page display
+    $_SESSION['billing_details'] = [
+        'order_id' => $db_order_id,
+        'name' => $order_details['name'],
+        'address' => $order_details['address'],
+        'total_amount' => $amount
+    ];
 
     // Set a success message and redirect to the billing page
-    $_SESSION['order_id'] = $db_order_id;
     $_SESSION['message'] = 'Order has been placed successfully!';
+    
+    // Unset the order details as they are now stored in billing_details
+    unset($_SESSION['order_details']);
+    
+    // Redirect to the billing page
     header("Location: billing.php");
     exit;
 } else {
-    // If the payment failed, show a message
+    // If the payment failed, redirect back to the checkout page or show a message
     echo "Transaction Verification Failed.";
     header("Location: checkout.php");
     exit;
 }
+?>

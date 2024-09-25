@@ -1,27 +1,34 @@
 <?php
 session_start();
 require 'includes/database.php'; // Include your database connection
+require 'header.php';
 
-if (!isset($_SESSION['order_details'])) {
-    // Redirect to the homepage if there's no order information
+$conn = getDB();
+// Check if billing details are available in the session
+if (!isset($_SESSION['billing_details'])) {
+    // Redirect to the homepage if there's no billing information
     header("Location: index.php");
     exit;
 }
 
-$order_id = $_SESSION['order_id'];
+// Retrieve billing details from the session
+$billing_details = $_SESSION['billing_details'];
+
+// Retrieve order ID and message
+$order_id = $billing_details['order_id'];
 $message = $_SESSION['message'] ?? '';
 
 // Retrieve order details from the database
 $conn = getDB();
 $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id = ?");
-$stmt->bind_param("s", $order_id);
+$stmt->bind_param("i", $order_id);
 $stmt->execute();
 $order = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 // Retrieve order items
 $stmt = $conn->prepare("SELECT * FROM order_items WHERE order_id = ?");
-$stmt->bind_param("s", $order_id);
+$stmt->bind_param("i", $order_id);
 $stmt->execute();
 $order_items = $stmt->get_result();
 $stmt->close();
@@ -49,7 +56,7 @@ $conn->close();
 <table>
     <thead>
         <tr>
-            <th>Product Name</th>
+            <th>Product ID</th>
             <th>Quantity</th>
             <th>Price</th>
         </tr>
@@ -69,10 +76,9 @@ $conn->close();
 
 </body>
 </html>
-<?
-// Clear session variables
-unset($_SESSION['order_id']);
-unset($_SESSION['payment_status']);
-unset($_SESSION['message']);
 
+<?php
+// Clear session variables related to billing
+unset($_SESSION['billing_details']);
+unset($_SESSION['message']);
 ?>

@@ -28,7 +28,18 @@ session_start();
                     <li><a href="userproduct.php">Products</a></li>
                     <li><a href="aboutus.php">About</a></li>
                     <li><a href="user_order.php">My Orders</a></li>
+                      <!-- Search Button with Dropdown -->
+                      <li class="search-dropdown">
+                        <a href="#" id="search-btn"><i class="fas fa-search"></i></a>
+                        <div class="dropdown-content" id="search-box">
+                            <form action="search.php" method="GET">
+                                <input type="text" name="query" placeholder="Search...">
+                                <button type="submit">Search</button>
+                            </form>
+                        </div>
+                    </li>
                 </ul>
+
 
                 <!-- User and Cart Icons -->
                 <div class="navbar-icons">
@@ -36,7 +47,7 @@ session_start();
                 if (isset($_SESSION['username'])) {
                     // User is logged in
                     $username = $_SESSION['username'];
-                    echo '<a href="profile.php">Welcome, ' . htmlspecialchars($username) . '!</a>';
+                    echo '<a href="user.php">Welcome, ' . htmlspecialchars($username) . '!</a>';
                     echo '<a href="cart.php"><i class="fas fa-shopping-cart"></i></a>';
                     echo '<a href="logout.php">Logout</a>';
                 } else {
@@ -45,8 +56,36 @@ session_start();
                     echo '<a href="signup.php"><i class="fas fa-user-circle"></i></a>';
                 }
                 ?>
+                
                 </div>
             </nav>
+            
         </div>
+        <script>
+      document.addEventListener('DOMContentLoaded', function () {
+            const searchBtn = document.getElementById('search-btn');
+            const searchBox = document.getElementById('search-box');
+            const searchDropdown = document.querySelector('.search-dropdown');
+
+            // Toggle dropdown on search icon click
+            searchBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchDropdown.classList.toggle('active');
+            });
+
+            // Prevent dropdown from closing when interacting inside the search box
+            searchBox.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Close the dropdown if clicking outside the search icon and dropdown
+            window.addEventListener('click', function(e) {
+                if (!searchDropdown.contains(e.target)) {
+                    searchDropdown.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
 </body>
 </html>

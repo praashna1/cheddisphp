@@ -5,13 +5,13 @@ require 'includes/database.php';
 require 'includes/validate.php';
 
 if($_SERVER["REQUEST_METHOD"]=="POST"){
-    $fname=$_POST['fname'];
-    $lname=$_POST['lname'];
+    $username=$_POST['username'];
+  
     $email=$_POST['email'];
     $password=$_POST['password'];
     $confirmPass=$_POST['confirmPass'];
     
-    if ($fname=='' || $lname=='' || $email=='' || $password=='' || $confirmPass=='') {
+    if ($username==''  || $email=='' || $password=='' || $confirmPass=='') {
         echo 'One or more fields are empty';
     }
     elseif(validateEmail($email)==false){
@@ -19,13 +19,13 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     }
     elseif($password==$confirmPass){
             $conn=getDB();
-            $sql="UPDATE login SET fname=?,lname=?,email=?,password=? WHERE fname=? ";//?is a placeholder for record item
+            $sql="UPDATE user SET username=?,email=?,password=? WHERE fname=? ";//?is a placeholder for record item
             $stmt=mysqli_prepare($conn,$sql);
             if($stmt===false){
                 echo mysqli_error($conn);
     
             }else{
-                mysqli_stmt_bind_param($stmt,"sssss",$fname,$lname,$email,$password,$username);
+                mysqli_stmt_bind_param($stmt,"ssss",$username,$email,$password,$username);
                 // here ss is to pass string values and i is to pass integer values
                 mysqli_stmt_execute($stmt);
   
@@ -35,7 +35,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
         }
 
         $conn = getDB();
-        $sql = 'SELECT * FROM customer WHERE FullName=?';
+        $sql = 'SELECT * FROM user WHERE username=?';
         $stmt=mysqli_prepare($conn,$sql);
             if($stmt===false){
                 echo mysqli_error($conn);
@@ -47,16 +47,14 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
             }
 
 ?>
-<!-- <div class="form-container">
+<link rel="stylesheet" href="styles.css">
+ <div class="form-container">
 <form action="" method="post">
 <div>
-            <label for="fname">First Name:</label>
+            <label for="username">UserName:</label>
             <input type="text" name="fname" id="fname" value="<?php echo $user['fname'] ?? ''; ?>">
         </div>
-        <div>
-            <label for="lname">Last Name:</label>
-            <input type="text" name="lname" id="lname" value="<?php echo $user['lname'] ?? ''; ?>">
-        </div>
+        
     <div>
         <label for="email">Email:</label>
         <input type="text" name="email" id="email" value="<?php echo $user['email'] ?? ''; ?>">
@@ -73,4 +71,4 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     <button class="save" name="save">Save</button><br>
 </form><br>
 </div>
-<?php require 'footer.php'; ?> -->
+
