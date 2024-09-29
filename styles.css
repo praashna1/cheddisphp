@@ -168,6 +168,31 @@ form button[type="submit"]:hover {
     background-color: #218838;
 }
 
+.cart-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.alert {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text */
+    padding: 10px;
+    border: 1px solid #f5c6cb; /* Border to match the background */
+    border-radius: 5px;
+    margin-bottom: 15px; /* Space below the alert */
+}
+
+.alert-danger {
+    border-color: #f5c6cb; /* Border color for danger alerts */
+}
+
+
+
+
 /* Links */
 a {
     text-decoration: none;
@@ -530,47 +555,82 @@ h1 {
 }
 
 /* Billing Details Form */
-.billing-details {
-  width: 55%;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+/* Center the billing container */
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #444;
+    margin-bottom: 20px;
 }
 
-.billing-details form {
-  display: flex;
-  flex-direction: column;
+/* Styling for success message */
+.alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #d6e9c6;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-.billing-details label {
-  font-weight: bold;
-  margin-top: 10px;
+/* Order details container */
+.order-details{
+    background-color: #fff;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-.billing-details input, 
-.billing-details select {
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+/* Order ID and total */
+.order-summary {
+    font-size: 18px;
+    margin-bottom: 15px;
 }
 
-.billing-details button {
-  background-color: #a0468f;
-  color: white;
-  padding: 15px;
-  margin-top: 20px;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  border-radius: 4px;
+.order-summary p {
+    margin: 5px 0;
+    font-weight: bold;
 }
 
-.billing-details button:hover {
-  background-color: #822a6f;
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Button/link styling */
+/* a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+a:hover {
+    background-color: #4cae4c;
+} */
 
 /* Media Query for Responsiveness */
 @media (max-width: 768px) {

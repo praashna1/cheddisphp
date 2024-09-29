@@ -1,6 +1,5 @@
-
-<?php require 'header.php'; 
-
+<?php
+require 'header.php'; 
 require 'includes/database.php'; // Include your database connection file
 
 // Check if the user is logged in
@@ -19,123 +18,85 @@ if (empty($cart)) {
     header("Location: index.php");
     exit;
 }
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Validate form data
-  $name = $_POST['name'];
-  $address = $_POST['address'];
-  $country = $_POST['country'];
-  $payment_method = $_POST['payment_method'];
-  $latitude = $_POST['latitude'];
-  $longitude = $_POST['longitude'];
+    // Validate form data
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $country = $_POST['country'];
+    $payment_method = $_POST['payment_method'];
+    $latitude = $_POST['latitude'];
+    $longitude = $_POST['longitude'];
 
-  // Store order details in session for later processing
-  $_SESSION['order_details'] = [
-      'name' => $name,
-      'address' => $address,
-      'country' => $country,
-      'payment_method' => $payment_method,
-      'latitude' => $_POST['latitude'],
- 'longitude' => $_POST['longitude'],
-      'cart' => $cart
-  ];
+    // Store order details in session for later processing
+    $_SESSION['order_details'] = [
+        'name' => $name,
+        'address' => $address,
+        'country' => $country,
+        'payment_method' => $payment_method,
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'cart' => $cart
+    ];
 
-  // Redirect to eSewa payment page
-  header("Location: esewa_payment.php");
-  exit;
-}
-// Calculate total amount from cart items
-$total_amount = array_sum(array_map(function($item) {
-    return $item['price'] * $item['quantity'];
-}, $cart));
-
-// Handle form submission (if user submits billing details and selects payment)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-  $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
-    $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
-    $conn = getDB();
     // Before placing the order, check if any product is out of stock
-foreach ($cart as $product_id => $item) {
-  $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
-  $stmt->bind_param('i', $product_id);
-  $stmt->execute();
-  $stmt->bind_result($available_quantity);
-  $stmt->fetch();
-  $stmt->close();
+    $conn = getDB();
+    foreach ($cart as $product_id => $item) {
+        $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
+        $stmt->bind_param('i', $product_id);
+        $stmt->execute();
+        $stmt->bind_result($available_quantity);
+        $stmt->fetch();
+        $stmt->close();
 
-  if ($available_quantity < $item['quantity']) {
-      // Product is out of stock, handle error
-      echo "Sorry, the product " . $item['name'] . " is out of stock.";
-      exit;
-  }
-}
-// Before redirecting to eSewa payment, store order details in session
-// $_SESSION['cart'] = $cart;  // Store cart items
-// $_SESSION['user_details'] = [
-//     'name' => $_POST['name'],
-//     'address' => $_POST['address'],
-//     'country' => $_POST['country'],
-//     'payment_method' => $_POST['payment_method'],
-//     'latitude' => $_POST['latitude'],
-//     'longitude' => $_POST['longitude'],
-// ];
-
-
-    // // Insert order into the database
-    // $conn = getDB();
-    // $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?,?,?)");
-    // $stmt->bind_param('issssddd', $user_id, $_POST['name'], $_POST['address'], $_POST['country'], $_POST['payment_method'], $total_amount, $latitude, $longitude);
-    // $stmt->execute();
-    // $order_id = $stmt->insert_id;  // Get the inserted order ID
-    // $stmt->close();
-
-    // // Insert order items
-    // foreach ($cart as $product_id => $item) {
-    //     $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
-    //     $stmt->bind_param('iiid', $order_id, $product_id, $item['quantity'], $item['price']);
-    //     $stmt->execute();
-    //     $stmt->close();
-    // }
+        if ($available_quantity < $item['quantity']) {
+            // Product is out of stock, handle error
+            echo "Sorry, the product " . $item['name'] . " is out of stock.";
+            exit;
+        }
+    }
 
     // After inserting the order details
-foreach ($cart as $product_id => $item) {
-  // Reduce the product quantity based on the ordered quantity
-  $stmt = $conn->prepare("UPDATE product SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?");
-  $stmt->bind_param('iii', $item['quantity'], $product_id, $item['quantity']);
-  $stmt->execute();
+    foreach ($cart as $product_id => $item) {
+        // Reduce the product quantity based on the ordered quantity
+        $stmt = $conn->prepare("UPDATE product SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?");
+        $stmt->bind_param('iii', $item['quantity'], $product_id, $item['quantity']);
+        $stmt->execute();
 
-  // Check if product is now out of stock
-  $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
-  $stmt->bind_param('i', $product_id);
-  $stmt->execute();
-  $stmt->bind_result($current_quantity);
-  $stmt->fetch();
-  $stmt->close();
+        // Check if the quantity is now zero
+        $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
+        $stmt->bind_param('i', $product_id);
+        $stmt->execute();
+        $stmt->bind_result($current_quantity);
+        $stmt->fetch();
+        $stmt->close();
 
-  // Mark the product as "Out of Stock" if quantity reaches zero
-  if ($current_quantity <= 0) {
-      $stmt = $conn->prepare("UPDATE product SET quantity = 'Out of Stock' WHERE product_id = ?");
-      $stmt->bind_param('i', $product_id);
-      $stmt->execute();
-      $stmt->close();
-  }
-}
+        // Mark the product as "Out of Stock" if quantity reaches zero
+        if ($current_quantity <= 0) {
+            // Instead of setting the quantity to 'Out of Stock', you may want to update a status column
+            $stmt = $conn->prepare("UPDATE product SET quantity = 0 WHERE product_id = ?"); // Assuming 'is_in_stock' is a boolean/flag
+            $stmt->bind_param('i', $product_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
 
     // Clear the cart
     setcookie('cart', '', time() - 3600, "/");  // Clear cart cookie after submitting order
 
     // If payment method is eSewa, redirect to eSewa's payment page
-    if ($_POST['payment_method'] == 'eSewa') {
-      $encoded_total = urlencode($total_amount);
-      $encoded_order_id = uniqid('order_'); // Generate a unique order ID
+    if ($payment_method == 'eSewa') {
+        $encoded_total = urlencode($total_amount);
+        $encoded_order_id = uniqid('order_'); // Generate a unique order ID
 
-      // Redirect to the eSewa payment gateway with required parameters
-      header("Location: esewa_payment.php?total=$encoded_total&order_id=$encoded_order_id&latitude=$latitude&longitude=$longitude");
-      exit;
+        // Redirect to the eSewa payment gateway with required parameters
+        header("Location: esewa_payment.php?total=$encoded_total&order_id=$encoded_order_id&latitude=$latitude&longitude=$longitude");
+        exit;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

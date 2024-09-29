@@ -21,3 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 $conn->close();
 ?>
+<form method="POST">
+    <label for="order_status">Update Order Status:</label>
+    <select name="order_status" id="order_status">
+        <option value="Cancelled">Cancelled</option>
+        <option value="In Process">In Process</option>
+        <option value="Delivered">Delivered</option>
+    </select>
+    <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+    <button type="submit">Update Status</button>
+</form>

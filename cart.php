@@ -5,6 +5,8 @@ require 'header.php';
 $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,8 +50,16 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <div class="cart-container">
+<?php
+if (isset($_SESSION['error_message'])) {
+    echo '<div class="alert alert-danger">' . $_SESSION['error_message'] . '</div>';
+    unset($_SESSION['error_message']); // Remove the error message after displaying it
+}
+?></div>
                 <button type="submit">Update Cart</button>
             </form>
+            
         <?php else: ?>
             <p>Your cart is empty.</p>
         <?php endif; ?>

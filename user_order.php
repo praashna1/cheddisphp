@@ -12,8 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch the list of ordered product IDs
-$sql = "SELECT DISTINCT p.product_id, p.name, p.description, p.price, p.image
+// Fetch the list of ordered product IDs with their statuses and image paths
+$sql = "SELECT DISTINCT p.product_id, p.name, p.description, p.price, p.image, o.order_status
         FROM orders o
         JOIN order_items oi ON o.order_id = oi.order_id
         JOIN product p ON oi.product_id = p.product_id
@@ -92,15 +92,17 @@ $conn->close();
                     <th>Product Name</th>
                     <th>Description</th>
                     <th>Price</th>
+                    <th>Order Status</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($ordered_products as $product): ?>
                     <tr>
-                        <td><img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"></td>
+                        <td><img src="img/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"></td>
                         <td><?php echo htmlspecialchars($product['name']); ?></td>
                         <td><?php echo htmlspecialchars($product['description']); ?></td>
                         <td>Rs.<?php echo number_format($product['price'], 2); ?></td>
+                        <td><?php echo htmlspecialchars($product['order_status']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

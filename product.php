@@ -90,7 +90,7 @@ if (!$result) {
                     <div class="product-info">
                         <h2><?php echo htmlspecialchars($row['name']); ?></h2>
                         <p><?php echo htmlspecialchars($row['description']); ?></p>
-                        <p>Price: $<?php echo number_format($row['price'], 2); ?></p>
+                        <p>Price: Rs.<?php echo number_format($row['price'], 2); ?></p>
                         <p>Available Quantity: <?php echo htmlspecialchars($row['quantity']); ?></p>
                         <form action="edit_product.php" method="get">
                             <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">

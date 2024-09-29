@@ -10,7 +10,6 @@ function getUser($conn, $email){
         if (mysqli_stmt_execute($stmt)) {
             $result = mysqli_stmt_get_result($stmt);
             
-            // Check if any rows were returned
             if (mysqli_num_rows($result) > 0) {
                 return mysqli_fetch_assoc($result); // User exists
             } else {
@@ -33,8 +32,7 @@ function getFactory($conn, $email){
         
         if (mysqli_stmt_execute($stmt)) {
             $result = mysqli_stmt_get_result($stmt);
-            
-            // Check if any rows were returned
+        
             if (mysqli_num_rows($result) > 0) {
                 return mysqli_fetch_assoc($result); // Factory exists
             } else {
@@ -49,10 +47,8 @@ function getFactory($conn, $email){
 }
 
 function validateEmail($email) {
-    // Regular expression pattern for email validation
     $pattern = '/^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
     
-    // Validate email address
     if (preg_match($pattern, $email)) {
         return true; // Email is valid
     } else {
@@ -62,17 +58,14 @@ function validateEmail($email) {
 
 // Function to validate username
 function validateUsername($username) {
-    // Regular expression for alphanumeric username
+    
     return preg_match('/^[a-zA-Z0-9]+$/', $username);
 }
 
 // Function to validate password
 function validatePassword($password) {
-    // Regular expression pattern for password validation
-    // At least one uppercase letter, one lowercase letter, one number, and one special character
     $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:"<>?[\];\',.\/`~\\|-]).{8,}$/';
     
-    // Validate password
     if (preg_match($pattern, $password)) {
         return true; // Password is valid
     } else {
@@ -81,7 +74,7 @@ function validatePassword($password) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Initialize the variables and check if they are set
+    
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
 
@@ -96,8 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user) {
             echo "Username already exists.";
         } else {
-            // Register the user
-            // Insert code to handle registration
+           
         }
     }
 }

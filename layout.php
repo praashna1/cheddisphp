@@ -193,13 +193,7 @@ var productsPieChart = new Chart(ctxPie, {
 
  </script>
 
-        <div class="analytics">
-            <h3>Top Selling Products</h3>
-            <ul>
-                <li>Product 1 - Sold 5 units</li>
-                <li>Product 2 - Sold 3 units</li>
-            </ul>
-        </div>
+        
 
         <div class="notifications">
             <h3>Notifications</h3>

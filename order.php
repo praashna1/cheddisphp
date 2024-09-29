@@ -77,25 +77,25 @@ $conn->close();
     margin-bottom: 10px;
 }
 
-.order-details {
+.order-detailss {
     width: 100%; /* Ensures the table takes full width */
     border-collapse: collapse;
     margin-bottom: 20px;
     
 }
 
-.order-details th, 
-.order-details td {
+.order-detailss th, 
+.order-detailss td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
 }
 
-.order-details th {
+.order-detailss th {
     background-color: #f4f4f4;
 }
 .order-header,
-.order-details {
+.order-detailss {
     margin-bottom: 20px;
     display: block;
 }
@@ -121,7 +121,7 @@ $conn->close();
                
             </div>
             
-            <table class="order-details">
+            <table class="order-detailss">
                 <thead>
                     <tr>
                         <th>Order ID</th>

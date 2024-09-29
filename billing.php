@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require 'includes/database.php'; // Include your database connection
 require 'header.php';
 
@@ -60,6 +60,7 @@ $conn->close();
             <th>Quantity</th>
             <th>Price</th>
         </tr>
+        
     </thead>
     <tbody>
         <?php while ($item = $order_items->fetch_assoc()): ?>
