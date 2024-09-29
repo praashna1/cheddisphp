@@ -36,7 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
                
             } else {
-                echo "Invalid username or password";
+                $error= "Invalid username or password";
+                header("Location: factlogin.php?error=" . urlencode($error));
             }
             mysqli_stmt_close($stmt);
         }

@@ -20,10 +20,17 @@
               <a href="#">Already have an account?</a>
               <a href="factsign.php">Signup</a>
             </div>
+
+        
+        
             <div class="inputBox">
               <input type="submit" value="Login" />
             </div>  
-                    
+            <?php 
+            if(isset($_GET['error'])){
+                echo '<div class="error-message">'.htmlspecialchars($_GET['error']).'</div>';
+            }
+            ?> 
                 </form>
             </div>
         </div>

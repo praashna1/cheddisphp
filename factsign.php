@@ -24,7 +24,11 @@
                             <label for="confirmPassword">Confirm Password:</label>
                             <input type="password" name="confirmPassword" id="confirmPassword" required>
                         </div>
-                        
+                        <?php 
+            if(isset($_GET['error'])){
+                echo '<div class="error-message">'.htmlspecialchars($_GET['error']).'</div>';
+            }
+            ?> 
                         
                         <div class="links">
               <a href="#">Already have an account?</a>
