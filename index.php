@@ -16,17 +16,20 @@ $sql = "SELECT product.product_id, product.name, product.description, product.pr
         JOIN factory ON product.factory_id = factory.factory_id";
 $result = $conn->query($sql);
 
-// Fetch the top 3 most sold products (based on total sales or any other metric)
+
+// Fetch the top 3 most sold in-stock products
 $topProductsSql = "
     SELECT p.product_id, p.name, p.description, p.price, p.image, p.quantity, f.name AS factory_name, SUM(oi.quantity) AS total_sales
     FROM product p
     JOIN factory f ON p.factory_id = f.factory_id
     JOIN order_items oi ON p.product_id = oi.product_id
+    WHERE p.quantity > 0  -- Exclude out-of-stock products
     GROUP BY p.product_id
     ORDER BY total_sales DESC
     LIMIT 3";  // Fetch only top 3 products
 
 $topProductsResult = $conn->query($topProductsSql);
+
 
 ?>
 
@@ -40,9 +43,9 @@ $topProductsResult = $conn->query($topProductsSql);
     <script>
         let currentImageIndex = 0;
         const images = [
-            "img/pinky.svg",
+            "img/pinkbanner.jpg",
             "img/banner.jpg",
-            "img/pinky.svg"
+            "img/pinkbanner.jpg"
         ];
 
         function changeImage() {
@@ -68,7 +71,7 @@ $topProductsResult = $conn->query($topProductsSql);
     
     <div id="live-banner" class="live-banner">Welcome! Today is ...</div>
     <div id="picture-banner" class="picture-banner">
-        <img id="banner-image" src="img/pinky.svg" alt="Special Promotion">
+        <img id="banner-image" src="img/banner.jpg" alt="Special Promotion">
     </div>
     <div class="container">
     <div class="recommended-section">

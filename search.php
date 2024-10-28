@@ -6,21 +6,49 @@ $conn = getDB();
 
 // Check if a search query is provided
 if (isset($_GET['query'])) {
-    $search_query = htmlspecialchars($_GET['query']); // Sanitize the input to prevent XSS
+    $search_query = htmlspecialchars($_GET['query']); // Sanitize input
 
-    // Query the database to search for products that match the query
+    // Initial SQL query using a broad LIKE search
     $sql = "SELECT * FROM product WHERE name LIKE ? OR description LIKE ?";
     $stmt = $conn->prepare($sql);
     $search_term = "%" . $search_query . "%";
     $stmt->bind_param("ss", $search_term, $search_term);
     $stmt->execute();
     $result = $stmt->get_result();
+
+    // Array to store similar results
+    $fuzzy_results = [];
+    $max_distance = 2; // Maximum Levenshtein distance allowed for a match
+
+    while ($row = $result->fetch_assoc()) {
+        // Calculate Levenshtein distance for both name and description
+        $name_distance = levenshtein($search_query, $row['name']);
+        $description_distance = levenshtein($search_query, $row['description']);
+
+        // If either distance is within the acceptable threshold, add to results
+        if ($name_distance <= $max_distance || $description_distance <= $max_distance) {
+            $fuzzy_results[] = $row;
+        }
+    }
+
+    // Display results
+    if (count($fuzzy_results) > 0) {
+        foreach ($fuzzy_results as $product) {
+            echo "<div>";
+            echo "<h2>" . htmlspecialchars($product['name']) . "</h2>";
+            echo "<p>" . htmlspecialchars($product['description']) . "</p>";
+            echo "<p>Price: $" . htmlspecialchars($product['price']) . "</p>";
+            echo "</div>";
+        }
+    } else {
+        echo "No results found.";
+    }
 } else {
-    // If no search query is provided, redirect back or show an error message
     echo "No search query provided.";
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
