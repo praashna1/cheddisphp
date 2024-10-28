@@ -8,7 +8,7 @@ if (isset($_SESSION['cart'])) {
 
 // Clear the cart cookie if it exists
 if (isset($_COOKIE['cart'])) {
-    // Set the cookie with an expired time to delete it
+    
     setcookie('cart', '', time() - 3600, '/');
 }
 
