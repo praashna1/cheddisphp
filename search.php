@@ -1,14 +1,12 @@
 <?php
-// Include the database connection file
 require 'header.php';
 require 'includes/database.php';
 $conn = getDB();
 
-// Check if a search query is provided
 if (isset($_GET['query'])) {
-    $search_query = htmlspecialchars($_GET['query']); // Sanitize input
+    $search_query = htmlspecialchars($_GET['query']);
 
-    // Initial SQL query using a broad LIKE search
+    // Use of LIKE for initial broad matching
     $sql = "SELECT * FROM product WHERE name LIKE ? OR description LIKE ?";
     $stmt = $conn->prepare($sql);
     $search_term = "%" . $search_query . "%";
@@ -16,22 +14,29 @@ if (isset($_GET['query'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Array to store similar results
-    $fuzzy_results = [];
-    $max_distance = 2; // Maximum Levenshtein distance allowed for a match
-
+    // Array to store LIKE query results
+    $like_results = [];
     while ($row = $result->fetch_assoc()) {
-        // Calculate Levenshtein distance for both name and description
-        $name_distance = levenshtein($search_query, $row['name']);
-        $description_distance = levenshtein($search_query, $row['description']);
+        $like_results[] = $row;
+    }
 
-        // If either distance is within the acceptable threshold, add to results
-        if ($name_distance <= $max_distance || $description_distance <= $max_distance) {
-            $fuzzy_results[] = $row;
+    // Array to store fuzzy Soundex results
+    $fuzzy_results = [];
+    $search_term_soundex = soundex($search_query); // Generate Soundex key for search query
+
+    // Iterate over LIKE results and apply Soundex matching
+    foreach ($like_results as $row) {
+        // Get Soundex keys for product name and description
+        $name_soundex = soundex($row['name']);
+        $description_soundex = soundex($row['description']);
+
+        // Check if Soundex matches the search query key
+        if ($name_soundex === $search_term_soundex || $description_soundex === $search_term_soundex) {
+            $fuzzy_results[] = $row; // Add the row to results if there's a match
         }
     }
 
-    // Display results
+    // Display fuzzy results
     if (count($fuzzy_results) > 0) {
         foreach ($fuzzy_results as $product) {
             echo "<div>";
@@ -48,6 +53,8 @@ if (isset($_GET['query'])) {
     exit;
 }
 ?>
+
+
 
 
 <!DOCTYPE html>

@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/database.php'; // Ensure this points correctly to the database connection file
+$conn = getDB(); // Define $conn using getDB() function from database.php
 
 function getUser($conn, $email){
     $sql = "SELECT * FROM user WHERE username=?";
@@ -59,7 +61,12 @@ function validateEmail($email) {
 // Function to validate username
 function validateUsername($username) {
     
-    return preg_match('/^[a-zA-Z0-9]+$/', $username);
+    return preg_match('/^[a-zA-Z]+$/', $username);
+}
+//for factory
+function validateName($name) {
+    // Allow only alphabetic characters and spaces
+    return preg_match('/^[a-zA-Z\s]+$/', $name);
 }
 
 // Function to validate password
@@ -73,24 +80,24 @@ function validatePassword($password) {
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    $username = isset($_POST['username']) ? $_POST['username'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
+//     $username = isset($_POST['username']) ? $_POST['username'] : '';
+//     $email = isset($_POST['email']) ? $_POST['email'] : '';
 
-    // Validate username
-    if (!validateUsername($username)) {
-        echo "Invalid username format. Only alphanumeric characters are allowed.";
-    } elseif (!validateEmail($email)) {
-        echo "Invalid email format.";
-    } else {
-        // Proceed with user or factory registration based on logic
-        $user = getUser($conn, $username);
-        if ($user) {
-            echo "Username already exists.";
-        } else {
+//     // Validate username
+//     if (!validateUsername($username)) {
+//         echo "Invalid username format. Only alphanumeric characters are allowed.";
+//     } elseif (!validateEmail($email)) {
+//         echo "Invalid email format.";
+//     } else {
+//         // Proceed with user or factory registration based on logic
+//         $user = getUser($conn, $username);
+//         if ($user) {
+//             echo "Username already exists.";
+//         } else {
            
-        }
-    }
-}
+//         }
+//     }
+// }
 ?>
