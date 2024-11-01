@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/database.php'; // Ensure this points correctly to the database connection file
-$conn = getDB(); // Define $conn using getDB() function from database.php
+require_once 'includes/database.php'; 
+$conn = getDB(); 
 
 function getUser($conn, $email){
     $sql = "SELECT * FROM user WHERE username=?";

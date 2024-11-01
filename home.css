@@ -107,7 +107,7 @@ body {
 
         .dropdown-content button {
             padding: 8px 12px;
-            background-color: #333;
+            background-color: #75294b !important;
             color: white;
             border: none;
             border-radius: 4px;
@@ -126,8 +126,8 @@ body {
 
 /* Live Banner design */
 .live-banner {
-    background-color: #333;
-    color: #fff;
+    background-color: #a144a2 !important;
+    color: #fff !important;
     text-align: center;
     padding: 10px 0;
     margin: 20px auto;
@@ -220,7 +220,7 @@ h1 {
     padding: 8px 15px;
     border: none;
     border-radius: 4px;
-    background-color: #28a745;
+    background-color: #a72876;
     color: white;
     cursor: pointer;
 }

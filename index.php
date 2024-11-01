@@ -39,7 +39,7 @@ $topProductsResult = $conn->query($topProductsSql);
     <meta charset="UTF-8">
     <title>Candy Shop</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link your CSS file here -->
-
+   
     <script>
         let currentImageIndex = 0;
         const images = [
@@ -64,7 +64,11 @@ $topProductsResult = $conn->query($topProductsSql);
             document.getElementById('live-banner').innerHTML = 'Welcome! Today is ' + dateStr + ', ' + timeStr;
         }
 
+window.onload = function() {
+    setInterval(updateTime, 1000);
+
         setInterval(updateTime, 1000);
+        };
     </script>
 </head>
 <body>

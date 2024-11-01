@@ -70,12 +70,12 @@ form input[type="submit"]:hover {
 }
 
 .product-info button[type="submit"] {
-    background-color: #007bff;
+    background-color: #57497d;
     color: white;
 }
 
 .product-info button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #532945;
 }
 
 .product-info button[type="submit"].delete {
@@ -179,7 +179,7 @@ form button[type="submit"]:hover {
 
 .alert {
     background-color: #f8d7da; /* Light red background */
-    color: #721c24; /* Dark red text */
+    color: #721c24; 
     padding: 10px;
     border: 1px solid #f5c6cb; /* Border to match the background */
     border-radius: 5px;
@@ -327,7 +327,7 @@ p {
 }
 
 .product-info button {
-    background-color: #28a745;
+    background-color: #47104c;
     color: #fff;
     border: none;
     padding: 10px 15px;
@@ -337,7 +337,7 @@ p {
 }
 
 .product-info button:hover {
-    background-color: #218838;
+    background-color: #460f4c;
 }
 
 
@@ -379,7 +379,7 @@ p {
 } */
 
  .related-product-info button {
-    background-color: #007bff;
+    background-color: #74195e;
     color: #fff;
     border: none;
     padding: 8px 12px;
@@ -389,7 +389,7 @@ p {
 }
 
 .related-product-info button:hover {
-    background-color: #0069d9;
+    background-color: #b800d9;
 } 
 
 

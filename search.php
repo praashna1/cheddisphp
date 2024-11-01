@@ -14,43 +14,7 @@ if (isset($_GET['query'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Array to store LIKE query results
-    $like_results = [];
-    while ($row = $result->fetch_assoc()) {
-        $like_results[] = $row;
-    }
-
-    // Array to store fuzzy Soundex results
-    $fuzzy_results = [];
-    $search_term_soundex = soundex($search_query); // Generate Soundex key for search query
-
-    // Iterate over LIKE results and apply Soundex matching
-    foreach ($like_results as $row) {
-        // Get Soundex keys for product name and description
-        $name_soundex = soundex($row['name']);
-        $description_soundex = soundex($row['description']);
-
-        // Check if Soundex matches the search query key
-        if ($name_soundex === $search_term_soundex || $description_soundex === $search_term_soundex) {
-            $fuzzy_results[] = $row; // Add the row to results if there's a match
-        }
-    }
-
-    // Display fuzzy results
-    if (count($fuzzy_results) > 0) {
-        foreach ($fuzzy_results as $product) {
-            echo "<div>";
-            echo "<h2>" . htmlspecialchars($product['name']) . "</h2>";
-            echo "<p>" . htmlspecialchars($product['description']) . "</p>";
-            echo "<p>Price: $" . htmlspecialchars($product['price']) . "</p>";
-            echo "</div>";
-        }
-    } else {
-        echo "No results found.";
-    }
-} else {
-    echo "No search query provided.";
-    exit;
+    
 }
 ?>
 
