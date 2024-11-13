@@ -64,9 +64,10 @@ if (isset($_SESSION['error_message'])) {
             <p>Your cart is empty.</p>
         <?php endif; ?>
         <div class="links">
-            <a href="index.php">Continue Shopping</a>
-            <a href="checkout.php">Proceed to Checkout</a>
-        </div>
+    <a href="index.php" class="button-link">Continue Shopping</a>
+    <a href="checkout.php" class="button-link">Proceed to Checkout</a>
+</div>
+
     </div>
 
     <script>

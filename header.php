@@ -18,7 +18,7 @@ session_start();
             <nav class="navbar">
                 <div class="navbar-logo">
                     <a href="index.php">
-                        <img src="img/cheddis.png" alt="Logo">
+                        <img src="img/cheddis1.svg" alt="Logo">
                     </a>
                 </div>
 

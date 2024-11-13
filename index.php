@@ -88,6 +88,7 @@ window.onload = function() {
                         <img src="img/<?php echo htmlspecialchars($topProduct['image']); ?>" alt="<?php echo htmlspecialchars($topProduct['name']); ?>">
                         <h3><?php echo htmlspecialchars($topProduct['name']); ?></h3>
                         <p>Price: Rs.<?php echo number_format($topProduct['price'], 2); ?></p>
+                        <p>Available Quantity: <?php echo htmlspecialchars($topProduct['quantity']); ?></p>
                     </a>
                 </div>
             <?php endwhile; ?>

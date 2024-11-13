@@ -104,14 +104,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Checkout</title>
     <link rel="stylesheet" href="styles.css">
-    
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-  
-  <!-- Leaflet JS -->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" /> 
+ 
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   
-  <!-- Optional: Leaflet Geocoding (for reverse geocoding, if needed) -->
+
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 </head>
@@ -230,11 +229,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   });
 
   // Add the geocoder (search box) to the map
-  var geocoder = L.Control.geocoder({
+  const geocoder = L.Control.geocoder({
     defaultMarkGeocode: false
   })
   .on('markgeocode', function(e) {
-    var latlng = e.geocode.center;
+    const latlng = e.geocode.center;
     map.setView(latlng, 15); // Move map to searched location
     marker.setLatLng(latlng); // Move the marker to the searched location
     updateLatLng(latlng.lat, latlng.lng); // Update the hidden input fields

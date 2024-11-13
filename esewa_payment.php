@@ -31,7 +31,7 @@ $failure_url = "http://localhost:3000/success.php"; // Consider adding a dedicat
 <body>
 
 <!-- Redirect Form for eSewa -->
-<form action="https://uat.esewa.com.np/epay/main" method="POST">
+<form id= "esewaform" action="https://uat.esewa.com.np/epay/main" method="POST">
     <input type="hidden" name="tAmt" value="<?php echo $total_amount; ?>"> 
     <input type="hidden" name="amt" value="<?php echo $total_amount; ?>"> 
     <input type="hidden" name="txAmt" value="0"> 
@@ -42,8 +42,13 @@ $failure_url = "http://localhost:3000/success.php"; // Consider adding a dedicat
     <input type="hidden" name="su" value="<?php echo $success_url; ?>"> 
     <input type="hidden" name="fu" value="<?php echo $failure_url; ?>"> 
 
-    <button type="submit">Proceed to eSewa</button>
+   
 </form>
+<script>
+    window.onload=function(){
+        document.getElementById("esewaform").submit();
+    };
+</script>
 
 </body>
 </html>

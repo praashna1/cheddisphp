@@ -22,20 +22,22 @@ $result = $conn->query($sql);
         .product-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
             gap: 20px;
             margin: 20px auto;
             max-width: 1200px;
+            justify-content: space-around;
         }
 
         .product-item {
+            display: flex;
             border: 1px solid #ddd;
             padding: 10px;
             border-radius: 8px;
             width: 250px;
             text-align: center;
-            background-color: #f9f9f9;
-            transition: transform 0.3s ease;
+            flex-direction: column;
+            justify-content: space-between; /* Ensures content is evenly distributed */
+            height: 100%;
         }
 
         .product-item:hover {
@@ -47,6 +49,8 @@ $result = $conn->query($sql);
             max-width: 100%;
             height: auto;
             border-radius: 8px;
+            object-fit: cover; /* Ensures consistent image size */
+            height: 200px;
         }
 
         .product-name {
@@ -59,9 +63,12 @@ $result = $conn->query($sql);
             font-size: 1.5em;
             margin: 5px 0;
         }
+        .product-actions {
+        margin-top: auto; /* Pushes buttons to the bottom */
+        }
 
         .product-actions button {
-            background-color: skyblue;
+            background-color: purple;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -70,7 +77,7 @@ $result = $conn->query($sql);
         }
 
         .product-actions button:hover {
-            background-color: blue;
+            background-color: darkorchid;
         }
     </style>
 </head>
