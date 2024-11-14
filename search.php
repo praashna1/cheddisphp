@@ -4,112 +4,125 @@ require 'includes/database.php';
 $conn = getDB();
 
 if (isset($_GET['query'])) {
-    $search_query = htmlspecialchars($_GET['query']);
-
-    // Use of LIKE for initial broad matching
-    $sql = "SELECT * FROM product WHERE name LIKE ? OR description LIKE ?";
-    $stmt = $conn->prepare($sql);
-    $search_term = "%" . $search_query . "%";
-    $stmt->bind_param("ss", $search_term, $search_term);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
+    $search_query = strtolower(htmlspecialchars($_GET['query']));
     
-}
-?>
+    // Fetch all products
+    $sql = "SELECT * FROM product";
+    $result = $conn->query($sql);
 
+    if ($result && $result->num_rows > 0) {
+       
+        $exact_matches = [];
+        $substring_matches = [];
+        $fuzzy_matches = [];
 
+        while ($row = $result->fetch_assoc()) {
+            // Converting lowercase for comparison
+            $product_name = strtolower($row['name']);
+            $product_desc = strtolower($row['description']);
 
+           
+            if ($product_name === $search_query || $product_desc === $search_query) {
+                $row['match_type'] = 'exact';
+                $exact_matches[] = $row;
+                continue; 
+            }
+            if (str_contains($product_name, $search_query) || str_contains($product_desc, $search_query)) {
+                $row['match_type'] = 'substring';
+                $substring_matches[] = $row;
+                continue; // Skip further checks if substring match found
+            }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
-    <link rel="stylesheet" href="home.css">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Search Results for "<?php echo $search_query; ?>"</h1>
+            // levenshtein distance
+            $distance_name = levenshtein($search_query, $product_name);
+            $distance_desc = levenshtein($search_query, $product_desc);
 
-        <?php
-        // Check if any products were found
-        if ($result->num_rows > 0) {
+            // give threshold
+            $levenshtein_threshold = 5; // higher means exact accuracy
+            if ($distance_name <= $levenshtein_threshold || $distance_desc <= $levenshtein_threshold) {
+                $row['match_type'] = 'fuzzy';
+                $row['levenshtein_score'] = min($distance_name, $distance_desc);
+                $fuzzy_matches[] = $row;
+            }
+        }
+
+       
+        usort($fuzzy_matches, function ($a, $b) {
+            return $a['levenshtein_score'] <=> $b['levenshtein_score'];
+        });
+
+        $all_matches = array_merge($exact_matches, $substring_matches, $fuzzy_matches);
+
+        if (!empty($all_matches)) {
+            echo '<div class="container">';
+            echo '<h1>Search Results for "' . htmlspecialchars($search_query) . '"</h1>';
             echo '<div class="product-list">';
-            
-            // Display the products
-            while ($row = $result->fetch_assoc()) {
+            foreach ($all_matches as $product) {
                 echo '<div class="product-item">';
-                // Ensure correct image path based on your existing structure
-                echo '<a href="productinfo.php?product_id=' . htmlspecialchars($row['product_id']) . '">';
-                echo '<img src="img/' . htmlspecialchars($row['image']) . '" alt="' . htmlspecialchars($row['name']) . '">';
+                echo '<a href="productinfo.php?product_id=' . htmlspecialchars($product['product_id']) . '">';
+                echo '<img src="img/' . htmlspecialchars($product['image']) . '" alt="' . htmlspecialchars($product['name']) . '">';
                 echo '</a>';
-                echo '<h2>' . htmlspecialchars($row['name']) . '</h2>';
-                echo '<p>' . htmlspecialchars($row['description']) . '</p>';
-                echo '<p>Price: Rs. ' . number_format($row['price'], 2) . '</p>';
-                echo '<p>Available Quantity: ' . htmlspecialchars($row['quantity']) . '</p>';
-                
-                // Add to Cart functionality or Out of Stock message
-                // if ($row['quantity'] > 0) {
-                //     echo '<form action="addcart.php" method="post">';
-                //     echo '<input type="hidden" name="product_id" value="' . htmlspecialchars($row['product_id']) . '">';
-                //     echo '<input type="number" name="quantity" min="1" max="' . htmlspecialchars($row['quantity']) . '" value="1">';
-                //     echo '<button type="submit">Add to Cart</button>';
-                //     echo '</form>';
-                // } else {
-                //     echo '<p style="color: red;">Out of Stock</p>';
-                // }
-
+                echo '<h2><a href="productinfo.php?product_id=' . htmlspecialchars($product['product_id']) . '">' . htmlspecialchars($product['name']) . '</a></h2>';
+                echo '<p>' . htmlspecialchars($product['description']) . '</p>';
+                echo '<p class="price">Price: Rs. ' . number_format($product['price'], 2) . '</p>';
                 echo '</div>';
             }
-            
-            echo '</div>';
+            echo '</div></div>';
         } else {
-            // No products found
-            echo '<p>No products found matching your search query.</p>';
+            echo '<p>No products found for "' . htmlspecialchars($search_query) . '".</p>';
         }
-        ?>
+    } else {
+        echo '<p>No products found in the database.</p>';
+    }
+}
+?>
+  <html>
+    <link rel="stylesheet" href="styles.css">
 
-    <style>
-        .product-list {
-            display: flex;
-            flex-wrap: wrap;
-        }
+<style>
 
-        .product-item {
-            width: 300px;
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
 
-        .product-item img {
-            max-width: 100%;
-            height: auto;
-        }
+.product-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
-        .product-item h2 {
-            font-size: 18px;
-        }
 
-        .product-item p {
-            margin: 10px 0;
-        }
 
-        .view-product {
-            padding: 8px 12px;
-            background-color: #333;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
+.product-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
 
-        .view-product:hover {
-            background-color: #555;
-        }
-    </style>
-</body>
+.product-item h2 {
+    font-size: 18px;
+    margin: 15px 10px 5px;
+    color: #333;
+}
+
+
+.product-item p {
+    margin: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.product-item .price {
+    font-weight: bold;
+    color: #000;
+    margin: 10px;
+}
+</style>
+
 </html>

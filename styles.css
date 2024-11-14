@@ -415,7 +415,7 @@ p {
 } 
 
  .related-product-info button {
-    background-color: #74195e !important;
+    background-color: #452268 !important;
     color: #fff;
     border: none;
     padding: 8px 12px;
@@ -424,9 +424,7 @@ p {
     border-radius: 5px;
 }
 
-.related-product-info button:hover {
-    background-color: #b800d9;
-} 
+
 
 
 
