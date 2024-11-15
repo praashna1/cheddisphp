@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Ensure order details are available in the session
+
 if (!isset($_SESSION['order_details'])) {
     header("Location: checkout.php");
     exit;
@@ -13,12 +13,12 @@ $total_amount = array_sum(array_map(function($item) {
     return $item['price'] * $item['quantity'];
 }, $order_details['cart']));
 
-$order_id = uniqid(); // Generate unique order ID for eSewa
+$order_id = uniqid(); 
 
 // eSewa Merchant ID and return URLs for success and failure
 $esewa_merchant_id = "EPAYTEST";
 $success_url = "http://localhost:3000/success.php?order_id={$order_id}&amt={$total_amount}";
-$failure_url = "http://localhost:3000/success.php"; // Consider adding a dedicated failure page
+$failure_url = "http://localhost:3000/success.php"; 
 
 ?>
 

@@ -17,7 +17,7 @@
                         <input type="password" name="password" id="password" required>
                     </div>
                     <div class="links">
-              <a href="#">Already have an account?</a>
+              <a href="Signup.php">Donot have an account?</a>
               <a href="signup.php">Signup</a>
             </div>
             <div class="inputBox">

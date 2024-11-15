@@ -40,6 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'cart' => $cart
     ];
 
+    // Calculate total amount for COD (if needed)
+    $total_amount = 0;
+    foreach ($cart as $item) {
+        $total_amount += $item['price'] * $item['quantity']; // Assuming 'price' and 'quantity' are set correctly
+    }
+
     // Before placing the order, check if any product is out of stock
     $conn = getDB();
     foreach ($cart as $product_id => $item) {
@@ -58,28 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // After inserting the order details
-    foreach ($cart as $product_id => $item) {
-        // Reduce the product quantity based on the ordered quantity
-        $stmt = $conn->prepare("UPDATE product SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?");
-        $stmt->bind_param('iii', $item['quantity'], $product_id, $item['quantity']);
-        $stmt->execute();
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, customer_name, address, country, payment_method, total_amount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('issssddd', $user_id, $name, $address, $country, $payment_method, $total_amount, $latitude, $longitude);
+    $stmt->execute();
+    $db_order_id = $stmt->insert_id;  // Get the last inserted order ID
+    $stmt->close();
 
-        // Check if the quantity is now zero
-        $stmt = $conn->prepare("SELECT quantity FROM product WHERE product_id = ?");
-        $stmt->bind_param('i', $product_id);
+    // Insert order items
+    foreach ($_SESSION['order_details']['cart'] as $product_id => $item) {
+        $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('iiid', $db_order_id, $product_id, $item['quantity'], $item['price']);
         $stmt->execute();
-        $stmt->bind_result($current_quantity);
-        $stmt->fetch();
         $stmt->close();
-
-        // Mark the product as "Out of Stock" if quantity reaches zero
-        if ($current_quantity <= 0) {
-            // Instead of setting the quantity to 'Out of Stock', you may want to update a status column
-            $stmt = $conn->prepare("UPDATE product SET quantity = 0 WHERE product_id = ?"); // Assuming 'is_in_stock' is a boolean/flag
-            $stmt->bind_param('i', $product_id);
-            $stmt->execute();
-            $stmt->close();
-        }
     }
 
     // Clear the cart
@@ -93,9 +89,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Redirect to the eSewa payment gateway with required parameters
         header("Location: esewa_payment.php?total=$encoded_total&order_id=$encoded_order_id&latitude=$latitude&longitude=$longitude");
         exit;
+    } elseif ($payment_method == 'cod') {
+        // Redirect to the billing page after COD order is placed
+        $_SESSION['billing_details'] = [
+            'order_id' => $db_order_id,
+            'name' => $name,
+            'address' => $address,
+            'total_amount' => $total_amount
+        ];
+
+        $_SESSION['message'] = 'Order has been placed successfully!';
+        
+        // Redirect to the billing page
+        header("Location: billing.php");
+        exit;
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -134,19 +145,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="payment_method">Payment Method:</label>
             <select name="payment_method" id="payment_method" required>
                 <option value="eSewa">eSewa</option>
-                <!-- Add other payment methods here if necessary -->
+                <option value="cod">Cash on delivery</option>
+               
             </select>
 
-  <!-- Your checkout form -->
-
-  <!-- Map container -->
+ 
   <div id="map" style="height: 400px; width: 100%;"></div>
     
-  <!-- Hidden inputs to store the latitude and longitude -->
   <input type="hidden" id="latitude" name="latitude">
   <input type="hidden" id="longitude" name="longitude">
 
-  <!-- Your remaining checkout form -->
+  
  
 
             <button type="submit">Submit Order</button>

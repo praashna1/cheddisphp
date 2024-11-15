@@ -26,7 +26,7 @@
                         </div>
                         
                         <div class="links">
-              <a href="#">Already have an account?</a>
+              <a href="login.php">Already have an account?</a>
               <a href="login.php">Login</a>
             </div>
             <div class="inputBox">
