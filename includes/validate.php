@@ -45,11 +45,11 @@ function getFactory($conn, $email){
         
         if (mysqli_stmt_execute($stmt)) {
             $result = mysqli_stmt_get_result($stmt);
-        
+            
             if (mysqli_num_rows($result) > 0) {
-                return mysqli_fetch_assoc($result); // Factory exists
+                return mysqli_fetch_assoc($result); // User exists
             } else {
-                return null; // Factory does not exist
+                return null; // User does not exist
             }
         } else {
             echo "Error executing statement: " . mysqli_stmt_error($stmt);

@@ -119,11 +119,11 @@ window.onload = function() {
                                     
                                     <button type="submit">Add to Cart</button>
                                 </form>
-                                <form action="checkout.php" method="get">
+                                <!-- <form action="checkout.php" method="get">
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                 
                                 <button type="submit">Buy Now</button>
-                            </form>
+                            </form> -->
                                 <?php else: ?>
         <!-- Show out of stock message if product quantity is 0 -->
         <p style="color: red;">Out of Stock</p>

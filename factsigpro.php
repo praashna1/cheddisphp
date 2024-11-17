@@ -11,7 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '';
 
-    // Array to collect error messages
     $errors = [];
 
     // Validation checks
@@ -37,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($existingUser) {
             $errors[] = 'Username already exists. Please choose a different username.';
         } else {
-            // Hash the password for security
+            // Hash the password 
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
             // Insert the new user into the database
@@ -46,12 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_bind_param($stmt, "sss", $name, $email, $passwordHash);
 
             if (mysqli_stmt_execute($stmt)) {
-                // Start session and set user information
                 session_start();
                 $_SESSION['factory_id'] = mysqli_insert_id($conn);
                 $_SESSION['name'] = $name;
-
-                // Redirect to login page or dashboard after successful registration
                 header("Location: factlogin.php");
                 exit();
             } else {
@@ -61,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Close the database connection
     mysqli_close($conn);
 }
 ?>

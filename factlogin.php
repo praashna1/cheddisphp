@@ -7,23 +7,19 @@
             <h2>Login</h2>
             <div class="form">
                 <div class="inputBox">
-                    <form action="factlogipro.php" method="post" class="form" id="login-form">
+                <form action="factlogipro.php" method="post" class="form" id="login-form">
                     <div>
                         <label for="email">Email:</label>
-                     <input type="email" name="email" id="email" required>
+                        <input type="email" name="email" id="email" required>
                     </div>
-
                     <div>
                         <label for="password">Password:</label>
                         <input type="password" name="password" id="password" required>
                     </div>
                     <div class="links">
-              <a href="#">Already have an account?</a>
+              <a href="factsign.php">Donot have an account?</a>
               <a href="factsign.php">Signup</a>
             </div>
-
-        
-        
             <div class="inputBox">
               <input type="submit" value="Login" />
             </div>  

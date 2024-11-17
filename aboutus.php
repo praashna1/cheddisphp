@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="styles.css">
     <title>About Us - Candy Shop</title>
     <style>
-        /* Global Styles */
+        
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -14,7 +14,6 @@ body {
     background-color: #f4f4f4;
 }
 
-/* About Us Container */
 .about-container {
     width: 80%;
     max-width: 800px;
@@ -25,7 +24,6 @@ body {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Headings */
 h1 {
     text-align: center;
     margin-bottom: 20px;
@@ -37,13 +35,12 @@ h2 {
     color: #333;
 }
 
-/* Paragraphs */
 .about-content p {
     margin: 15px 0;
     color: #666;
 }
 
-/* Links */
+
 a {
     color: #007bff;
     text-decoration: none;
