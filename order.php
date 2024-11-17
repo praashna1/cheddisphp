@@ -69,7 +69,7 @@ $conn->close();
     margin: 20px;
     margin-left: 220px; /* Adjust this to match the width of your sidebar */
     padding: 20px;
-    width: calc(100% - 220px); /* Ensures the order content takes the remaining space */
+    /* Ensures the order content takes the remaining space */
     box-sizing: border-box;
 }
 

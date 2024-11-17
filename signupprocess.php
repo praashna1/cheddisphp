@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if username or email already exists
     if (empty($errors)) {
-        $existingUser = getUser($conn, $username);
+        $existingUser = getUse($conn, $username);
         if ($existingUser) {
             $errors[] = 'Username already exists. Please choose a different username.';
         } else {

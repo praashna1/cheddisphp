@@ -35,9 +35,8 @@ $factory_id = $_SESSION['factory_id'];
 // Fetch order locations from the database
 $conn = getDB();
 $stmt = $conn->prepare("
-    SELECT o.order_id AS order_id, dl.latitude, dl.longitude, oi.product_id
-    FROM orders dl
-    JOIN orders o ON o.order_id = dl.order_id
+    SELECT o.order_id, o.latitude, o.longitude, oi.product_id
+    FROM orders o
     JOIN order_items oi ON oi.order_id = o.order_id
     JOIN product p ON p.product_id = oi.product_id
     WHERE p.factory_id = ?
@@ -52,10 +51,25 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Fetch delivered orders for the current factory
-$delivered_order_ids = [2, 16]; // Example order IDs for delivered orders; replace with actual IDs or query
+$stmt = $conn->prepare("
+    SELECT DISTINCT o.order_id
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN product p ON p.product_id = oi.product_id
+    WHERE o.order_status = 'Delivered' AND p.factory_id = ?
+");
+$stmt->bind_param('i', $factory_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$delivered_order_ids = array_column($result->fetch_all(MYSQLI_ASSOC), 'order_id');
+
+// Filter locations to exclude delivered orders
 $filtered_locations = array_filter($locations, function ($location) use ($delivered_order_ids) {
-    return !in_array($location['order_id'], $delivered_order_ids) &&
-           !is_null($location['latitude']) && !is_null($location['longitude']);
+    return (
+        !in_array($location['order_id'], $delivered_order_ids) &&
+        !is_null($location['latitude']) && 
+        !is_null($location['longitude'])
+    );
 });
 
 // Get the factory's coordinates
@@ -119,13 +133,15 @@ function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
 }
 
 $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_locations);
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Optimized Delivery Route Map</title>
+    <title>Delivery Route Map</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Include Leaflet CSS -->
     
@@ -155,12 +171,25 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_loca
             width: 80%;
             margin: auto;
         }
+        .popup-content {
+    max-width: 200px; /* Adjust this value as needed */
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
     </style>
 </head>
 <body>
     <div class="location-container">
-        <h2>Optimized Delivery Route Map</h2>
-        <div id="map" style="height: 500px;"></div>
+        <h2>Delivery Route Map</h2>
+        <div id="map" style="height: 500px;">
+
+
+        </div>
+        <div id="info-box" style="padding: 10px; border: 1px solid #ccc; margin-top: 10px;">
+    Click on a stop to see details.
+</div>
 
 <script>
 // Initialize the map centered on the factory location
@@ -187,14 +216,28 @@ var waypoints = [
     L.latLng(<?php echo $factory_lat; ?>, <?php echo $factory_lng; ?>) // Return to factory
 ];
 
-// Plot the route using Leaflet Routing Machine
 L.Routing.control({
     waypoints: waypoints,
     routeWhileDragging: false,
     createMarker: function(i, wp, nWps) {
-        return L.marker(wp.latLng).bindPopup(i === 0 ? 'Factory' : (i === nWps - 1 ? 'Back to Factory' : `Stop ${i}`));
+        // Example data assuming it exists in your PHP array
+        const customerInfo = <?php echo json_encode($optimized_route['route']); ?>;
+        
+        const popupContent = (i === 0) ? 'Factory' : 
+                            
+                             `Stop ${i}<br>Order ID: ${customerInfo[i - 1].order_id}`;
+        
+        return L.marker(wp.latLng)
+                .bindPopup(popupContent)
+                .on('click', function() {
+                    document.getElementById('info-box').innerHTML = `
+                        <strong>Order ID:</strong> ${customerInfo[i - 1].order_id}<br>
+                        <strong>Distance:</strong> ${customerInfo[i - 1].distance.toFixed(2)} km
+                    `;
+                });
     }
 }).addTo(map);
+
 </script>
 
 </body>

@@ -18,13 +18,13 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // Function to mark notifications as read is in markread.php
-function markNotificationAsRead($notification_id, $conn) {
-    $sql = "UPDATE notifications SET is_read = 1 WHERE notification_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $notification_id);
-    $stmt->execute();
-    $stmt->close();
-}
+// function markNotificationAsRead($notification_id, $conn) {
+//     $sql = "UPDATE notifications SET is_read = 1 WHERE notification_id = ?";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param('i', $notification_id);
+//     $stmt->execute();
+//     $stmt->close();
+// }
 
 // Total Sales at top of dashboard rectangular box
 $sql_sales = "SELECT SUM(o.total_amount) as total_sales 
@@ -195,7 +195,7 @@ var productsPieChart = new Chart(ctxPie, {
 
         
 
-        <div class="notifications">
+        <!-- <div class="notifications">
             <h3>Notifications</h3>
             <?php if (empty($notifications)): ?>
                 <p>No new notifications.</p>
@@ -209,7 +209,7 @@ var productsPieChart = new Chart(ctxPie, {
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
-        </div>
+        </div> -->
     </div>
     
    

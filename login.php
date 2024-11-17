@@ -9,8 +9,8 @@
                 <div class="inputBox">
                 <form action="LoginProcess.php" method="post" class="form" id="login-form">
                     <div>
-                        <label for="username">Username:</label>
-                        <input type="text" name="username" id="username" required>
+                        <label for="email">Username:</label>
+                        <input type="email" name="email" id="email" required>
                     </div>
                     <div>
                         <label for="password">Password:</label>

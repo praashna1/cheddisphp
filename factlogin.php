@@ -9,9 +9,10 @@
                 <div class="inputBox">
                     <form action="factlogipro.php" method="post" class="form" id="login-form">
                     <div>
-                        <label for="name">Username:</label>
-                        <input type="text" name="name" id="name" required>
+                        <label for="email">Email:</label>
+                     <input type="email" name="email" id="email" required>
                     </div>
+
                     <div>
                         <label for="password">Password:</label>
                         <input type="password" name="password" id="password" required>

@@ -3,7 +3,7 @@ require_once 'includes/database.php';
 $conn = getDB(); 
 
 function getUser($conn, $email){
-    $sql = "SELECT * FROM user WHERE username=?";
+    $sql = "SELECT * FROM user WHERE email=?";
     $stmt = mysqli_prepare($conn, $sql);
     
     if ($stmt) {
@@ -24,9 +24,20 @@ function getUser($conn, $email){
         echo "Error preparing statement: " . mysqli_error($conn);
     }
 }
+function getUse($conn, $username) {
+    $sql = "SELECT * FROM user WHERE username = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    return $user;
+}
+
 
 function getFactory($conn, $email){
-    $sql = "SELECT * FROM factory WHERE name=?";
+    $sql = "SELECT * FROM factory WHERE email=?";
     $stmt = mysqli_prepare($conn, $sql);
     
     if ($stmt) {

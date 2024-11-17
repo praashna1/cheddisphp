@@ -70,7 +70,7 @@ a:hover {
             <p>We are a team of passionate candy enthusiasts who are always on the lookout for the latest trends and flavors. Our love for candy drives us to constantly innovate and expand our offerings, making Candy Shop a place where you can always find something new and exciting.</p>
             
             <h2>Get in Touch</h2>
-            <p>We love hearing from our customers! Whether you have a question, a suggestion, or just want to share your candy experience, feel free to reach out to us. You can contact us through our <a href="contact.php">Contact Us</a> page, or follow us on social media for the latest updates and promotions.</p>
+            <p>We love hearing from our customers! Whether you have a question, a suggestion, or just want to share your candy experience, feel free to reach out to us. You can contact us through our page, or follow us on social media for the latest updates and promotions.</p>
         </div>
     </div>
 </body>

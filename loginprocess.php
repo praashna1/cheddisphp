@@ -5,18 +5,18 @@ require_once 'includes/database.php';
 $conn = getDB();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
-    $user = getUser($conn, $username);
+    $user = getUser($conn, $email);
 
-    if (empty($username) || empty($password)) {
+    if (empty($email) || empty($password)) {
         $error = 'Username or Password is empty';
         header("Location: login.php?error=" . urlencode($error));
         exit();
     } else {
-        $sql = "SELECT * FROM user WHERE username = ?";
+        $sql = "SELECT * FROM user WHERE email = ?";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         
@@ -25,10 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: login.php?error=" . urlencode($error));
         } else {
             $user = mysqli_fetch_assoc($result);
-            if ($username == $user['username'] && $password == $user['password']) {
+            if ($email== $user['email'] && $password == $user['password']) {
                 session_start();
                 $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['username'] = $user['username']; // Assuming 'name' is the username field in your database
+
                 header("Location: index.php");
             } else {
                 $error = "Invalid username or password";
