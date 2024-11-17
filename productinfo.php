@@ -3,10 +3,10 @@ require 'header.php';
 require 'includes/database.php';
 $conn = getDB();
 
-// Get the product ID from the URL
+
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
-// Fetch the selected product
+
 $sql = "SELECT * FROM product WHERE product_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $product_id);
@@ -19,7 +19,6 @@ if (!$product) {
     exit();
 }
 
-// Fetch other products for "You Might Be Interested In" section
 $sql_related = "SELECT * FROM product WHERE product_id != ? ORDER BY RAND() LIMIT 4";
 $stmt_related = $conn->prepare($sql_related);
 $stmt_related->bind_param("i", $product_id);

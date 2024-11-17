@@ -1,11 +1,10 @@
 <?php
 require 'factory.php';
-require 'includes/database.php'; // Include your database connection file
+require 'includes/database.php'; 
 
-// Function to calculate the distance between two points using Haversine formula
 function Distance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
 {
-    $earthRadius = 6371; // Earth radius in kilometers
+    $earthRadius = 6371;
 
     $latFrom = deg2rad($latitudeFrom);
     $lonFrom = deg2rad($longitudeFrom);
@@ -20,10 +19,10 @@ function Distance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
          sin($lonDelta / 2) * sin($lonDelta / 2);
     $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-    return $earthRadius * $c; // Distance in kilometers
+    return $earthRadius * $c; 
 }
 
-// Check if the user is logged in
+
 if (!isset($_SESSION['factory_id'])) {
     $_SESSION['message'] = "Please log in to view orders.";
     header("Location: factlogin.php");
@@ -32,7 +31,7 @@ if (!isset($_SESSION['factory_id'])) {
 
 $factory_id = $_SESSION['factory_id'];
 
-// Fetch order locations from the database
+
 $conn = getDB();
 $stmt = $conn->prepare("
     SELECT o.order_id, o.latitude, o.longitude, oi.product_id
@@ -50,7 +49,7 @@ while ($row = $result->fetch_assoc()) {
     $locations[] = $row;
 }
 
-// Fetch delivered orders for the current factory
+
 $stmt = $conn->prepare("
     SELECT DISTINCT o.order_id
     FROM orders o
@@ -63,7 +62,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $delivered_order_ids = array_column($result->fetch_all(MYSQLI_ASSOC), 'order_id');
 
-// Filter locations to exclude delivered orders
+
 $filtered_locations = array_filter($locations, function ($location) use ($delivered_order_ids) {
     return (
         !in_array($location['order_id'], $delivered_order_ids) &&
@@ -73,8 +72,8 @@ $filtered_locations = array_filter($locations, function ($location) use ($delive
 });
 
 // Get the factory's coordinates
-$factory_lat = 27.7172; // Example latitude
-$factory_lng = 85.3240; // Example longitude
+$factory_lat = 27.7172; 
+$factory_lng = 85.3240; 
 
 // Nearest Neighbor Algorithm to calculate the optimized route
 function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
@@ -84,7 +83,6 @@ function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
     $route = [];
     $total_distance = 0;
 
-    // While there are unvisited locations
     while (count($visited) < count($locations)) {
         $nearest_location = null;
         $nearest_distance = PHP_INT_MAX;
@@ -109,16 +107,11 @@ function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
             'distance' => $nearest_distance
         ];
         $total_distance += $nearest_distance;
-
-        // Update current position
         $current_lat = $nearest_location['latitude'];
         $current_lng = $nearest_location['longitude'];
 
-        // Mark as visited
         $visited[] = $nearest_index;
     }
-
-    // Return to factory (round trip)
     $return_distance = Distance($current_lat, $current_lng, $factory_lat, $factory_lng);
     $total_distance += $return_distance;
 
@@ -143,7 +136,6 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_loca
     <meta charset="UTF-8">
     <title>Delivery Route Map</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Include Leaflet CSS -->
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -172,7 +164,7 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_loca
             margin: auto;
         }
         .popup-content {
-    max-width: 200px; /* Adjust this value as needed */
+    max-width: 200px; 
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -192,22 +184,15 @@ $optimized_route = findOptimizedRoute($factory_lat, $factory_lng, $filtered_loca
 </div>
 
 <script>
-// Initialize the map centered on the factory location
 var map = L.map('map').setView([<?php echo $factory_lat; ?>, <?php echo $factory_lng; ?>], 12);
-
-// Add OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
-
-// Factory marker
 var factoryMarker = L.marker([<?php echo $factory_lat; ?>, <?php echo $factory_lng; ?>])
     .addTo(map)
     .bindPopup('<b>Factory Location</b>')
     .openPopup();
-
-// Gather optimized route coordinates in the order provided by your PHP array
 var waypoints = [
     L.latLng(<?php echo $factory_lat; ?>, <?php echo $factory_lng; ?>), // Start from the factory
     <?php foreach ($optimized_route['route'] as $location): ?>
@@ -220,7 +205,6 @@ L.Routing.control({
     waypoints: waypoints,
     routeWhileDragging: false,
     createMarker: function(i, wp, nWps) {
-        // Example data assuming it exists in your PHP array
         const customerInfo = <?php echo json_encode($optimized_route['route']); ?>;
         
         const popupContent = (i === 0) ? 'Factory' : 

@@ -3,15 +3,12 @@ require 'factory.php';
 require 'includes/database.php';
 $conn = getDB();
 
-// Ensure the user is logged in and is a factory
 if (!isset($_SESSION['factory_id'])) {
     header("Location: factlogin.php");
     exit;
 }
 
 $factory_id = $_SESSION['factory_id'];
-// // Example call inside your order placement logic
-// addFactoryNotification($order_id, $factory_id, $conn);
 
 function addFactoryNotification($order_id, $factory_id, $conn) {
     $message = "You have received a new order (Order ID: {$order_id})";
@@ -23,9 +20,6 @@ function addFactoryNotification($order_id, $factory_id, $conn) {
     $stmt->close();
 }
 
-
-
-// Fetch orders for products from the factory
 $sql = "SELECT o.order_id, o.customer_name, o.address, o.country, o.payment_method, o.total_amount, o.order_status,
                oi.product_id, p.name AS product_name, oi.quantity, oi.price, (oi.quantity * oi.price) AS item_total
         FROM orders o
@@ -65,11 +59,10 @@ $conn->close();
         .orders-container {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Adds space between orders */
+    gap: 20px; 
     margin: 20px;
-    margin-left: 220px; /* Adjust this to match the width of your sidebar */
+    margin-left: 220px; 
     padding: 20px;
-    /* Ensures the order content takes the remaining space */
     box-sizing: border-box;
 }
 
@@ -78,7 +71,7 @@ $conn->close();
 }
 
 .order-detailss {
-    width: 100%; /* Ensures the table takes full width */
+    width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
     

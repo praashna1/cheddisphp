@@ -1,7 +1,6 @@
 <?php
 require 'header.php';
 
-// Get cart data from cookie
 $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 ?>
 
@@ -13,9 +12,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
     <meta charset="UTF-8">
     <title>Your Cart</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Include your refined CSS here */
-    </style>
+
 </head>
 <body>
     <div class="container">
@@ -54,7 +51,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 <?php
 if (isset($_SESSION['error_message'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error_message'] . '</div>';
-    unset($_SESSION['error_message']); // Remove the error message after displaying it
+    unset($_SESSION['error_message']); 
 }
 ?></div>
                 <button type="submit">Update Cart</button>

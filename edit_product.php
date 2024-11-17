@@ -1,7 +1,4 @@
-
 <?php
-
-// Database connection
 require 'factory.php';
 require 'includes/database.php';
 
@@ -9,16 +6,14 @@ require 'includes/database.php';
 $conn = getDB();
 
 $product = null;
-$message = ""; // Initialize message variable
+$message = ""; 
 
-// Fetch product details
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $product_id = $_GET['product_id'] ?? null;
     if ($product_id == null) {
         echo "No product ID.";
         exit;
     }
-
     $sql = "SELECT product_id, name, description, price, image, quantity FROM product WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $product_id);
@@ -32,8 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 }
-
-// Update product
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_id = $_POST['product_id'];
     $name = $_POST['name'];
@@ -60,21 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "Product updated successfully.";
             $messageClass = "success";
         }
-
-        // Redirect to the same page with the product_id
         header("Location: edit_product.php?product_id=" . $product_id . "&message=" . urlencode($message));
         exit;
     } else {
         $message = "Error updating product: " . $conn->error;
     }
 }
-
-// Check for message in URL
 if (isset($_GET['message'])) {
     $message = urldecode($_GET['message']);
 }
 
-// Close the database connection
 $conn->close();
 ?>
 
@@ -90,7 +78,6 @@ $conn->close();
 <div class="container">
     <h1>Edit Product</h1>
 
-    <!-- Display the message -->
     <div id="message" class="<?php echo htmlspecialchars($messageClass); ?>">
         <?php if (!empty($message)): ?>
             <p><?php echo htmlspecialchars($message); ?></p>

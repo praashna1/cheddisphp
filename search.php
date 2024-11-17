@@ -6,7 +6,6 @@ $conn = getDB();
 if (isset($_GET['query'])) {
     $search_query = strtolower(htmlspecialchars($_GET['query']));
     
-    // Fetch all products
     $sql = "SELECT * FROM product";
     $result = $conn->query($sql);
 
@@ -17,7 +16,6 @@ if (isset($_GET['query'])) {
         $fuzzy_matches = [];
 
         while ($row = $result->fetch_assoc()) {
-            // Converting lowercase for comparison
             $product_name = strtolower($row['name']);
             $product_desc = strtolower($row['description']);
 
@@ -30,14 +28,11 @@ if (isset($_GET['query'])) {
             if (str_contains($product_name, $search_query) || str_contains($product_desc, $search_query)) {
                 $row['match_type'] = 'substring';
                 $substring_matches[] = $row;
-                continue; // Skip further checks if substring match found
+                continue;
             }
-
-            // levenshtein distance
             $distance_name = levenshtein($search_query, $product_name);
             $distance_desc = levenshtein($search_query, $product_desc);
 
-            // give threshold
             $levenshtein_threshold = 5; // higher means exact accuracy
             if ($distance_name <= $levenshtein_threshold || $distance_desc <= $levenshtein_threshold) {
                 $row['match_type'] = 'fuzzy';

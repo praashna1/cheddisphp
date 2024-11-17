@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST") {
         $_SESSION['loggedIn'] = true;
         $_SESSION['email'] = $email;
         $_SESSION['userId']=$user_id;
-        // echo '<script>window.parent.redirectToHome();</script>';
+       
         header("Location:index.php");
         exit;
     }else{

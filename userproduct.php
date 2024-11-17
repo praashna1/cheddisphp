@@ -2,8 +2,6 @@
 require 'header.php';
 require 'includes/database.php';
 $conn = getDB();
-
-// Fetch products from the database
 $sql = "SELECT * FROM product";
 $result = $conn->query($sql);
 
@@ -18,7 +16,7 @@ $result = $conn->query($sql);
     <title>All Products</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Product Grid Styles */
+
         .product-container {
             display: flex;
             flex-wrap: wrap;
@@ -36,7 +34,7 @@ $result = $conn->query($sql);
             width: 250px;
             text-align: center;
             flex-direction: column;
-            justify-content: space-between; /* Ensures content is evenly distributed */
+            justify-content: space-between; 
             height: 100%;
         }
 
@@ -49,7 +47,7 @@ $result = $conn->query($sql);
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            object-fit: cover; /* Ensures consistent image size */
+            object-fit: cover; 
             height: 200px;
         }
 
@@ -64,7 +62,7 @@ $result = $conn->query($sql);
             margin: 5px 0;
         }
         .product-actions {
-        margin-top: auto; /* Pushes buttons to the bottom */
+        margin-top: auto; 
         }
 
         .product-actions button {
@@ -108,7 +106,6 @@ $result = $conn->query($sql);
 
 <script>
     function addToCart(productId) {
-        // Implement AJAX or form to add product to cart
         window.location.href = 'addcart.php?product_id=' + productId;
     }
 </script>

@@ -1,24 +1,19 @@
 <?php
 
-require 'includes/database.php'; // Include your database connection
+require 'includes/database.php'; 
 require 'header.php';
 
 $conn = getDB();
-// Check if billing details are available in the session
+
 if (!isset($_SESSION['billing_details'])) {
-    // Redirect to the homepage if there's no billing information
     header("Location: index.php");
     exit;
 }
 
-// Retrieve billing details from the session
 $billing_details = $_SESSION['billing_details'];
-
-// Retrieve order ID and message
 $order_id = $billing_details['order_id'];
 $message = $_SESSION['message'] ?? '';
 
-// Retrieve order details from the database
 $conn = getDB();
 $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id = ?");
 $stmt->bind_param("i", $order_id);
@@ -26,7 +21,6 @@ $stmt->execute();
 $order = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// Retrieve order items
 $stmt = $conn->prepare("SELECT * FROM order_items WHERE order_id = ?");
 $stmt->bind_param("i", $order_id);
 $stmt->execute();
@@ -79,7 +73,7 @@ $conn->close();
 </html>
 
 <?php
-// Clear session variables related to billing
+// Clear session variables
 unset($_SESSION['billing_details']);
 unset($_SESSION['message']);
 ?>

@@ -4,52 +4,37 @@ require 'header.php';
 
 $conn = getDB();
 
-// Ensure the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
-
-// Variable to track cancellation success
 $cancellation_success = false;
 
-// Handle cancellation request (remove the order and update its status to 'Cancelled')
 if (isset($_POST['cancel_order_id'])) {
     $order_id_to_cancel = $_POST['cancel_order_id'];
-
-    // Begin transaction to ensure data consistency
     $conn->begin_transaction();
 
     try {
-        // First, delete the order items from the order_items table
         $delete_order_items_sql = "DELETE FROM order_items WHERE order_id = ?";
         $stmt = $conn->prepare($delete_order_items_sql);
         $stmt->bind_param('i', $order_id_to_cancel);
         $stmt->execute();
         $stmt->close();
-
-        // Now update the status of the order to 'Cancelled' in the orders table
         $update_order_status_sql = "UPDATE orders SET order_status = 'Cancelled' WHERE order_id = ? AND user_id = ?";
         $stmt = $conn->prepare($update_order_status_sql);
         $stmt->bind_param('ii', $order_id_to_cancel, $user_id);
         $stmt->execute();
         $stmt->close();
-
-        // Commit transaction
         $conn->commit();
-
-        // Set cancellation success flag
         $cancellation_success = true;
     } catch (Exception $e) {
-        // If an error occurs, rollback the transaction
         $conn->rollback();
         echo "Error: " . $e->getMessage();
     }
 }
 
-// Fetch the list of ordered product IDs with their statuses and image paths
 $sql = "SELECT DISTINCT p.product_id, p.name, p.description, p.price, p.image, o.order_id, o.order_status
         FROM orders o
         JOIN order_items oi ON o.order_id = oi.order_id

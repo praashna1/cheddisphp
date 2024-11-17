@@ -9,7 +9,6 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar with Sidebar</title>
     <link rel="stylesheet" href="home.css">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -21,14 +20,11 @@ session_start();
                         <img src="img/cheddis1.svg" alt="Logo">
                     </a>
                 </div>
-
-                <!-- Adding Navbar Links -->
                 <ul class="nav-links">
                     <li><a href="index.php">Home</a></li>
                     <li><a href="userproduct.php">Products</a></li>
                     <li><a href="aboutus.php">About</a></li>
                     <li><a href="user_order.php">My Orders</a></li>
-                      <!-- Search Button with Dropdown -->
                       <li class="search-dropdown">
                         <a href="#" id="search-btn"><i class="fas fa-search"></i></a>
                         <div class="dropdown-content" id="search-box">
@@ -39,9 +35,6 @@ session_start();
                         </div>
                     </li>
                 </ul>
-
-
-                <!-- User and Cart Icons -->
                 <div class="navbar-icons">
                 <?php
                 if (isset($_SESSION['username'])) {
@@ -67,18 +60,14 @@ session_start();
             const searchBox = document.getElementById('search-box');
             const searchDropdown = document.querySelector('.search-dropdown');
 
-            // Toggle dropdown on search icon click
             searchBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 searchDropdown.classList.toggle('active');
             });
 
-            // Prevent dropdown from closing when interacting inside the search box
             searchBox.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
-
-            // Close the dropdown if clicking outside the search icon and dropdown
             window.addEventListener('click', function(e) {
                 if (!searchDropdown.contains(e.target)) {
                     searchDropdown.classList.remove('active');

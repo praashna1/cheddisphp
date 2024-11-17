@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param('si', $status, $order_id);
 
     if ($stmt->execute()) {
-        header("Location: order.php"); // Redirect to the orders page
+        header("Location: order.php"); 
         exit;
     } else {
         echo "Error updating status.";

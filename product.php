@@ -1,23 +1,15 @@
 <?php
-// Database connection
  require 'factory.php';
 require 'includes/database.php';
 
 $conn = getDB();
-
-
-
-// Fetch products from the database
 $sql = "SELECT product_id, name, description, price, image, quantity FROM product WHERE factory_id = ?";
 $stmt = $conn->prepare($sql);
 if (isset($_SESSION['factory_id'])) {
     $factory_id = $_SESSION['factory_id'];
-// $factory_id = 1; // Replace with the logged-in factory's ID
 $stmt->bind_param("i", $factory_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
-// Check for errors
 if (!$result) {
     echo "Error: " . $conn->error;
     exit;
@@ -34,16 +26,16 @@ if (!$result) {
     <title>Factory Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Sidebar width adjustment */
+    
 .product-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
    
     gap: 20px; /* Space between product cards */
-    margin-left: 240px; /* Adjust this to match the width of your sidebar */
+    margin-left: 240px;
     padding: 20px;
     padding-left: 20px;
-    width: calc(100% - 240px); /* Ensures the grid takes up the remaining space */
+    width: calc(100% - 240px); 
     box-sizing: border-box;
 }
 .product-card {
@@ -58,19 +50,19 @@ if (!$result) {
 
 @media (max-width: 1200px) {
     .product-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 products per row for medium screens */
+        grid-template-columns: repeat(3, 1fr); 
     }
 }
 
 @media (max-width: 768px) {
     .product-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 products per row for smaller screens */
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
 @media (max-width: 480px) {
     .product-grid {
-        grid-template-columns: 1fr; /* 1 product per row for mobile screens */
+        grid-template-columns: 1fr; 
     }
 }
 
@@ -81,7 +73,6 @@ if (!$result) {
 </head>
 <body>
 <div class="product-grid">
-    <!-- <a href="dashboard.php" class="btn">Add New Product</a> -->
    
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
@@ -113,7 +104,7 @@ if (!$result) {
 </html>
 
 <?php
-// Close the database connection
+
 $conn->close();
 ?>
 

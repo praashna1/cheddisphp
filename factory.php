@@ -9,8 +9,6 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factory Dashboard</title>
     <link rel="stylesheet" href="layout.css">
-    
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .custom-icon {
@@ -27,18 +25,16 @@ session_start();
             <li><a href="order.php">Orders</a></li>
             <li><a href="upload.php">Add new Product</a></li>
             <li><a href="nearest.php">Location</a></li>
-            <!-- <li><a href="#">Reports</a></li>
-            <li><a href="#">Logout</a></li> -->
        
             <?php
                 if (isset($_SESSION['name'])) {
-                    // User is logged in
+                  
                     $username = $_SESSION['name'];
                     echo '<a href="profile.php">Welcome, ' . htmlspecialchars($username) . '!</a>';
                    
                     echo '<a href="logout.php">Logout</a>';
                 } else {
-                    // User is not logged in
+
                     
                     echo ' <a href="factsign.php"><i class="fas fa-user-circle custom-icon></i></a>';
                 }

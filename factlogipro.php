@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_start();
                 $_SESSION['factory_id'] = $user['factory_id'];
                 $_SESSION['email'] = $user['email'];
-                $_SESSION['name'] = $user['name']; // Assuming 'name' is the username field in your database
+                $_SESSION['name'] = $user['name']; 
 
                 header("Location: layout.php");
             } else {

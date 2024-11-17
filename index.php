@@ -38,7 +38,7 @@ $topProductsResult = $conn->query($topProductsSql);
 <head>
     <meta charset="UTF-8">
     <title>Candy Shop</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link your CSS file here -->
+    <link rel="stylesheet" href="styles.css"> 
    
     <script>
         let currentImageIndex = 0;
@@ -125,7 +125,6 @@ window.onload = function() {
                                 <button type="submit">Buy Now</button>
                             </form> -->
                                 <?php else: ?>
-        <!-- Show out of stock message if product quantity is 0 -->
         <p style="color: red;">Out of Stock</p>
     <?php endif; ?>
                             </div>

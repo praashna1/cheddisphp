@@ -1,10 +1,9 @@
 <?php
-require 'factory.php';   // Ensure this has your session initialization logic
-require 'includes/database.php';   // Include the database connection file
-$conn = getDB();   // Initialize the connection
+require 'factory.php';   
+require 'includes/database.php';
+$conn = getDB();  
 
-// Fetch unread notifications for the factory
-$factory_id = $_SESSION['factory_id']; // Ensure the factory ID is available in session
+$factory_id = $_SESSION['factory_id']; 
 $sql = "SELECT * FROM notifications WHERE factory_id = ? AND is_read = 0 ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $factory_id);
@@ -26,7 +25,6 @@ $stmt->close();
 //     $stmt->close();
 // }
 
-// Total Sales at top of dashboard rectangular box
 $sql_sales = "SELECT SUM(o.total_amount) as total_sales 
               FROM orders o 
               JOIN order_items oi ON o.order_id = oi.order_id
@@ -39,7 +37,7 @@ $result_sales = $stmt_sales->get_result();
 $total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0; 
 $stmt_sales->close();
 
-// Total Orders 
+
 $sql_orders = "SELECT COUNT(DISTINCT o.order_id) as total_orders
                FROM orders o 
                JOIN order_items oi ON o.order_id = oi.order_id
@@ -52,7 +50,7 @@ $result_orders = $stmt_orders->get_result();
 $total_orders = $result_orders->fetch_assoc()['total_orders'] ?? 0; 
 $stmt_orders->close();
 
-// Fetch product order counts for the factory's products
+
 $sql_products = "SELECT p.name AS product_name, SUM(oi.quantity) AS total_ordered
                  FROM order_items oi
                  JOIN product p ON oi.product_id = p.product_id
@@ -104,11 +102,11 @@ $stmt_products->close();
         <div class="summary-cards">
     <div class="card">
         <h3>Total Sales</h3>
-        <p>Rs. <?php echo number_format($total_sales, 2); ?></p> <!-- Display total sales -->
+        <p>Rs. <?php echo number_format($total_sales, 2); ?></p> 
     </div>
     <div class="card">
         <h3>Total Orders</h3>
-        <p><?php echo $total_orders; ?></p> <!-- Display total orders -->
+        <p><?php echo $total_orders; ?></p>
     </div>
 </div>
 
@@ -122,17 +120,17 @@ $stmt_products->close();
             </div>
         </div>
         </div>
-        <script > // Bar chart for Total Sales and Total Orders
+        <script > 
 var ctx = document.getElementById('salesChart').getContext('2d');
 var salesChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ['Total Sales', 'Total Orders'], // Labels for the chart
+        labels: ['Total Sales', 'Total Orders'], 
         datasets: [{
             label: 'Factory Overview',
-            data: [<?php echo $total_sales; ?>, <?php echo $total_orders; ?>], // Dynamic data from PHP
+            data: [<?php echo $total_sales; ?>, <?php echo $total_orders; ?>], 
             backgroundColor: [
-                'rgba(75, 192, 192, 0.6)', // Color for Total Sales
+                'rgba(75, 192, 192, 0.6)',
                 'rgba(153, 102, 255, 0.6)'  // Color for Total Orders
             ],
             borderColor: [
@@ -151,14 +149,13 @@ var salesChart = new Chart(ctx, {
     }
 });
 
-// Pie chart for Products Ordered (from most to least)
 var ctxPie = document.getElementById('productsPieChart').getContext('2d');
 var productsPieChart = new Chart(ctxPie, {
     type: 'pie',
     data: {
-        labels: <?php echo json_encode($product_names); ?>, // Dynamic product names
+        labels: <?php echo json_encode($product_names); ?>,
         datasets: [{
-            data: <?php echo json_encode($product_order_counts); ?>, // Dynamic order counts
+            data: <?php echo json_encode($product_order_counts); ?>, 
             backgroundColor: [
                 'rgba(255, 99, 132, 0.6)', // Colors for the slices of the pie
                 'rgba(54, 162, 235, 0.6)',
@@ -182,10 +179,10 @@ var productsPieChart = new Chart(ctxPie, {
         responsive: true,
         plugins: {
             legend: {
-                position: 'top', // Position of the legend
+                position: 'top', 
             },
             tooltip: {
-                enabled: true // Enable tooltips for better interactivity
+                enabled: true 
             }
         }
     }
