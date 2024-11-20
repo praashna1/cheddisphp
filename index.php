@@ -19,14 +19,15 @@ $result = $conn->query($sql);
 
 // Fetch the top 3 most sold in-stock products
 $topProductsSql = "
-    SELECT p.product_id, p.name, p.description, p.price, p.image, p.quantity, f.name AS factory_name, SUM(oi.quantity) AS total_sales
+    SELECT p.product_id, p.name, p.description,  p.price,  p.image,  p.quantity,  f.name AS factory_name,  SUM(oi.quantity) AS total_sales,
+    SUM(oi.quantity) * 1.5 AS weighted_sales
     FROM product p
     JOIN factory f ON p.factory_id = f.factory_id
     JOIN order_items oi ON p.product_id = oi.product_id
-    WHERE p.quantity > 0  -- Exclude out-of-stock products
+    WHERE p.quantity > 0 -- Exclude out-of-stock products
     GROUP BY p.product_id
-    ORDER BY total_sales DESC
-    LIMIT 3";  // Fetch only top 3 products
+    ORDER BY weighted_sales DESC -- Ordering based on weighted sales
+    LIMIT 3";  //Fetch only top 3 products
 
 $topProductsResult = $conn->query($topProductsSql);
 

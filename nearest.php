@@ -87,7 +87,7 @@ function findOptimizedRoute($factory_lat, $factory_lng, $locations) {
         $nearest_location = null;
         $nearest_distance = PHP_INT_MAX;
 
-        // Find the nearest unvisited location
+        // Find the nearest unvisited location using algo
         foreach ($locations as $index => $location) {
             if (!in_array($index, $visited)) {
                 $distance = Distance($current_lat, $current_lng, $location['latitude'], $location['longitude']);
